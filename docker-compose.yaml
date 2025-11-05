@@ -9,7 +9,7 @@ networks:
 services:
   backend:
     build: ./backend
-    container_name: backend_camagru
+    container_name: backend_dictionnaire
     env_file: .env
     hostname: backend
     ports:
@@ -24,7 +24,7 @@ services:
 
   postgres:
     image: postgres:16beta1-alpine3.18
-    container_name: postgres_camagru
+    container_name: postgres_dictionnaire
     hostname: postgres
     env_file: .env
     restart: always
@@ -37,7 +37,7 @@ services:
 
   adminer:
     image: adminer:4.8.1-standalone
-    container_name: adminer_camagru
+    container_name: adminer_dictionnaire
     env_file: .env
     restart: always
     ports:
@@ -45,30 +45,29 @@ services:
     networks:
       - backend
 
-  nginx:
+  frontend:
     build: ./frontend
-    container_name: nginx_camagru
+    container_name: frontend_dictionnaire
     env_file: .env
     depends_on: 
       - backend
     ports:
-      - 7505:80
+      - 7503:80
     restart: always
     networks:
       - backend
     volumes:
-      - ./frontend/Public:/var/www/html
       - ./frontend:/app
 
-  swagger:
-    image: swaggerapi/swagger-ui
-    container_name: swagger_camagru
-    env_file: .env
-    ports:
-      - 7506:8080
-    restart: always
-    networks:
-      - backend
+  # swagger:
+  #   image: swaggerapi/swagger-ui
+  #   container_name: swagger_camagru
+  #   env_file: .env
+  #   ports:
+  #     - 7506:8080
+  #   restart: always
+  #   networks:
+  #     - backend
 
   # mail:
   #   image: marcopas/docker-mailslurp

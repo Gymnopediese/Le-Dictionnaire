@@ -1,7 +1,5 @@
 from faker import Faker
-
 from imports.all import *
-
 from hashlib import sha256
 import random
 

@@ -40,4 +40,8 @@ def server_error(err: Exception):
     app.logger.exception(err.args[0])
     return jsonify(err.args[0]), 500
 
+@app.route("/ping")
+def ping():
+    return jsonify("pong")
+
 # emit('connect', {'data': 'Connected'})

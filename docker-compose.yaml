@@ -52,7 +52,7 @@ services:
     depends_on: 
       - backend
     ports:
-      - 7503:80
+      - 7503:5173
     restart: always
     networks:
       - backend

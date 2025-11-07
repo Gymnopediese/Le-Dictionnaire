@@ -8,7 +8,7 @@ export default defineConfig({
         "allowedHosts" : ["dictionnaire.kofl.ch", "diskworld", "localhost"],
         proxy: {
             '/api': {
-                target: 'http://backend:5000/',
+                target: 'https://api.dictionnaire.kofl.ch',
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
             }

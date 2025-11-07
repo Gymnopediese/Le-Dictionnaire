@@ -4,7 +4,7 @@
 # from api.comments.put import *
 # from api.comments.delete import *
 
-from api.auth.login import *
+from api.auth.signin import *
 from api.auth.signup import *
 from api.auth.password import *
 
@@ -24,7 +24,8 @@ from api.users.users import *
 # from api.users.signup.post import *
 # from api.users.password.post import *
 
-# from api.me.get import *
+from api.me import *
+from api.termes import *
 # from api.me.put import *
 # from api.me.delete import *
 

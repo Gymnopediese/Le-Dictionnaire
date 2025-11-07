@@ -6,6 +6,9 @@ from services.swagger import *
 from services.images import *
 
 
+api_object.register_blueprint(me)
+api_object.register_blueprint(termes)
+
 api_object.register_blueprint(users)
 api_object.register_blueprint(auth)
 api_object.register_blueprint(images)

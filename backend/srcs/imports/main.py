@@ -8,6 +8,7 @@ from schemas.auth import *
 from schemas.user import *
 from schemas.publication import *
 from schemas.comment import *
+from schemas.termes import *
 
 from hashlib import sha256
 import time

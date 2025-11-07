@@ -55,10 +55,13 @@ def rewrite_me_routes():
     
 
 
-users = Blueprint("users", "users", url_prefix="/api/users", description="Users for the backend",)
-auth = Blueprint("auth", "auth", url_prefix="/api/auth", description="Authentification for the backend",)
-images = Blueprint("images", "images", url_prefix="/api/images", description="Authentification for the backend",)
+me = Blueprint("me", "me", url_prefix="/me", description="Request my data",)
+termes = Blueprint("termes", "termes", url_prefix="/termes", description="Request my data",)
 
-publications = Blueprint("publications", "publications", url_prefix="/api/publications", description="Publications for the backend",)
+users = Blueprint("users", "users", url_prefix="/users", description="Users for the backend",)
+auth = Blueprint("auth", "auth", url_prefix="/auth", description="Authentification for the backend",)
+images = Blueprint("images", "images", url_prefix="/images", description="Authentification for the backend",)
+
+publications = Blueprint("publications", "publications", url_prefix="/publications", description="Publications for the backend",)
 
 comments = Blueprint("comments", "comments", url_prefix="/<int:publication_id>/comments", description="Comments for the backend",)

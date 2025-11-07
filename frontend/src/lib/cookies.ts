@@ -1,9 +1,12 @@
 
 export var cookies = {}
-
+var loaded = false
 export function load_cookies()
 {
-    var _cookies = document.cookie.split(";")
+    if (loaded)
+        return loaded
+    loaded = true
+    var _cookies = document.cookie.split("; ")
     if (document.cookie == "")
         return;
     for (let cookie of _cookies)
@@ -11,6 +14,7 @@ export function load_cookies()
         let cookie_split = cookie.split("=")
         cookies[cookie_split[0]] = cookie_split[1]
     }
+    return false
 }
 
 // export function save_cookies()

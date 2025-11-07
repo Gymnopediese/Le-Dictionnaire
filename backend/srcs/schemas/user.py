@@ -12,13 +12,11 @@ class UpdateUser(Schema):
 class UserResponse(Schema):
     id = fields.Int()
     username = fields.Str()
-    email = fields.Email()
+
 
 class UserSchema(Schema):
     id = fields.Int()
     username = fields.Str()
-    email = fields.Email()
-    recieve_notifications = fields.Bool()
 
 class UserListResponse(Schema):
     users = fields.List(fields.Nested(UserResponse))

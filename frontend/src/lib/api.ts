@@ -1,24 +1,24 @@
 import { goto } from "$app/navigation";
 import { cookies, remove_cookie,  } from "./cookies";
 
-function preprotection()
-{
-    if (!cookies.token)
-    {
-        goto("/")
-        return false
-    }
-    return true;
-}
-
 export async function ping()
 {
     return await get("/ping");
 }
 
-function protection(result: Response) {
+function preprotection()
+{
+    if (!cookies.token)
+    {
+        goto("/login")
+        return false
+    }
+    return true;
+}
 
-    if (result.status == 401)
+async function protection(result: Response, token_needed: boolean = true) {
+
+    if (result.status == 401 && token_needed)
     {
         remove_cookie("token")
         goto("/")
@@ -26,16 +26,17 @@ function protection(result: Response) {
     }
     if (result.status >= 400)
     {
-        throw new Error("Error: " + result.status + " " + result.statusText)
+        throw await result.json();
     }
-    return result.json();
+    return await result.json();
 
 }
 
-export async function get(route: string)
+export async function get(route: string, token_needed: boolean = true)
 {
 
-    if (!preprotection()) return
+    if (!preprotection() && token_needed) return
+    //"https://api.dictionnaire.kofl.ch" 
     var result = await fetch("/api" + route, {
         method: 'GET',
         headers: {
@@ -43,12 +44,12 @@ export async function get(route: string)
             'Authorization': "Bearer " + cookies.token,
         },
     })
-    return protection(result);
+    return await protection(result, token_needed);
 }
 
-export async function put(route: string, body: any)
+export async function put(route: string, body: any, token_needed: boolean = true)
 {
-    if (!preprotection()) return
+    if (!preprotection() && token_needed) return
     var result = await fetch("/api" + route, {
         method: 'PUT',
         headers: {
@@ -57,12 +58,12 @@ export async function put(route: string, body: any)
         },
         body: JSON.stringify(body)
     })
-    return protection(result);
+    return await protection(result, token_needed);
 }
 
-export async function post(route: string, body: any)
+export async function post(route: string, body: any, token_needed: boolean = false)
 {
-    if (!preprotection()) return
+    if (!preprotection() && token_needed) return
     var result = await fetch("/api" + route, {
         method: 'POST',
         headers: {
@@ -71,7 +72,7 @@ export async function post(route: string, body: any)
         },
         body: JSON.stringify(body)
     })
-    return protection(result);
+    return await protection(result, token_needed);
 }
 
 export async function del(route: string)
@@ -84,5 +85,5 @@ export async function del(route: string)
             'Authorization': "Bearer " + cookies.token,
         },
     })
-    return protection(result);
+    return await protection(result);
 }

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request, abort
 import sys
 import os
-from flask import Flask
+from flask import Flask, Response
 from flask_cors import CORS
 from flask import Flask
 from flask import jsonify
@@ -9,7 +9,8 @@ from flask import jsonify
 
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 app.debug = True
 app.config["SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
@@ -26,22 +27,44 @@ def internal_server_error(e):
 app.register_error_handler(500, internal_server_error)
 app.register_error_handler(400, internal_server_error)
 
+@app.before_request
+def before_request():
+    # headers = {
+    #     'Access-Control-Allow-Origin': 'dictionnaire.kofl.ch',
+    #     'Access-Control-Allow-Methods': "GET, POST, PUT, DELETE, OPTIONS",
+    #     'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept, Authorization, authorization",
+    #     "Access-Control-Allow-Credentials": "true",
+    # }
+    
+    if request.method == 'OPTIONS' or request.method == 'options':
+        return Response()
+    
+    # print(request.get_json())
+
+@app.after_request
+def add_header(response):
+    # response.headers['Access-Control-Allow-Origin'] = '*'
+    # response.headers['Access-Control-Allow-Methods'] = 'POST,GET,PATCH,OPTIONS'
+    print("responding", response.headers)
+    return response
+
 import traceback
 @app.errorhandler(Exception)
 def server_error(err: Exception):
     print(traceback.format_exc(), file=sys.stderr)
-    print(err)
-
-    if len(err.args)  == 0:
-        return jsonify({"stderr": str(err)}), 500
-
+    print("Error: ", err)
+    if len(err.args) == 0:
+        return jsonify(err.args[1]), err.args[0]
     if len(err.args) and not type(err.args[0]) is dict:
-        return jsonify({"stderr": str(err)}), 500
+        return jsonify(err.args[1]), err.args[0]
     app.logger.exception(err.args[0])
-    return jsonify(err.args[0]), 500
+    return jsonify(err.args[1]), 500
 
 @app.route("/ping")
 def ping():
-    return jsonify("pong")
+    return jsonify({
+        "pong": "pong",
+        "ip": request.remote_addr
+    })
 
 # emit('connect', {'data': 'Connected'})

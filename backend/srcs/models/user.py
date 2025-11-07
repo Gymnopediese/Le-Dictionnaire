@@ -14,6 +14,17 @@ class User(db.Model):
             "username": self.username,
         }
     
+    @staticmethod
+    def exists(username=None, password=None):
+        if username:
+            return User.query.filter_by(username=username).first() != None
+        else:
+            return User.query.filter_by(password=password).first() != None
+    
+    @staticmethod
+    def hash(password):
+        return sha256(password.encode()).hexdigest()
+    
     def check_password(self, password):
         return self.password == sha256(password.encode()).hexdigest()
     

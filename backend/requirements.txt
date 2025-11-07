@@ -11,3 +11,4 @@ itsdangerous
 flask-cors
 flask-smorest
 pillow
+pyopenssl

@@ -1,9 +1,17 @@
 from imports.all import *
 from tests.fake_db import fake_db
 from sqlalchemy.sql import text
+from generator import main as generate_import_files
 os.environ['PYTHONUNBUFFERED'] = "1"
+import atexit
+
+def on_exit():
+    generate_import_files()
+atexit.register(on_exit)
 
 if __name__ == '__main__':
+    generate_import_files()
+    
     
     # if os.getenv("TEST") == "True":
     with app.app_context():

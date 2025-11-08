@@ -7,6 +7,8 @@
 **/__pycache__/*.pyo
 **/__pycache__/*_cache
 
+**/archive
+archive
 # .Env
 .env
 backend/images/publications

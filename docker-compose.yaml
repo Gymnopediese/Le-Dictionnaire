@@ -42,7 +42,7 @@ services:
     restart: always
     ports:
       - 7502:8080
-    cnetworks:
+    networks:
       - backend
   
   # nginx:

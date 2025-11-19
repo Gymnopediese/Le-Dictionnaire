@@ -28,4 +28,4 @@ if __name__ == '__main__':
         # fake_db()
         pass
 
-    app.run(debug=True, host="0.0.0.0", ssl_context='adhoc')
+    app.run(debug=True, host="0.0.0.0")#, ssl_context='adhoc')

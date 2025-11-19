@@ -37,7 +37,7 @@ export async function get(route: string, token_needed: boolean = true)
 
     if (!preprotection() && token_needed) return
     //"https://api.dictionnaire.kofl.ch" 
-    var result = await fetch("https://api.dictionnaire.kofl.ch" + route, {
+    var result = await fetch("/api" + route, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

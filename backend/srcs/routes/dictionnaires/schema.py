@@ -7,6 +7,7 @@ class DictionnaireVisibilityEnum(enum.Enum):
 
 class DictionnaireCreate(Schema):
     name = fields.Str(required=True)
+    description = fields.Str(required=True)
     visibility = fields.Enum(DictionnaireVisibilityEnum, required=True)
     suggestions = fields.Boolean(required=True)
 

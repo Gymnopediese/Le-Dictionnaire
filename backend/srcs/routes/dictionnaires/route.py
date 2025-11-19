@@ -49,7 +49,7 @@ class DictionnairesAPI(MethodView):
         )
         db.session.add(dico)
         db.session.commit()
-        return jsonify(dico.serialize())
+        return jsonify({})
     
     
     # @dictionnaires.doc(description="Delete a user by ID")

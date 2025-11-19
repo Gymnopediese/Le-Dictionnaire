@@ -22,6 +22,10 @@ re:		down fclean up
 logs:
 		docker compose logs
 
+lbackend:
+		docker logs -f backend_dictionnaire
+
+
 ls:
 		docker compose images
 		docker compose ps

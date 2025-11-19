@@ -7,13 +7,15 @@
 
 
     var name        : string = "";
+    var description : string = "";
     var visibility  : string = "";
     var suggestions : boolean = true;
+
 
     async function create_dictionnaire()
     {
         await post("/dictionnaires/", {
-            name, visibility, suggestions
+            name, visibility, suggestions, description
         })
         location.href = '/dictionnaires'
     }
@@ -27,6 +29,8 @@
 
 </InputChoice>
 
-<input bind:checked={suggestions} type="checkbox" name="" id="">
+<textarea bind:value="{description}" name="" id=""></textarea>
+
+<input  bind:checked={suggestions} type="checkbox" name="" id="">
 
 <button on:click={create_dictionnaire}>lets go</button>

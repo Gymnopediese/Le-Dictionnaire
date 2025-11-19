@@ -1,18 +1,21 @@
 from imports.all import *
-from tests.fake_db import fake_db
-from sqlalchemy.sql import text
+import blueprints
 from generator import main as generate_import_files
+from flask_migrate import Migrate
+
+
 os.environ['PYTHONUNBUFFERED'] = "1"
 import atexit
+
+migrate = Migrate(app, db)
+
 
 def on_exit():
     generate_import_files()
 atexit.register(on_exit)
 
+
 if __name__ == '__main__':
-    generate_import_files()
-    
-    
     # if os.getenv("TEST") == "True":
     with app.app_context():
         # db.drop_all()
@@ -20,12 +23,9 @@ if __name__ == '__main__':
         # db.session.execute(text("CREATE SCHEMA public;"))
         # db.session.commit()
         db.create_all()
-        
         # db.session.add(User(username="poupi", password=User.hash("123")))
         db.session.commit()
-        
         # fake_db()
         pass
 
     app.run(debug=True, host="0.0.0.0", ssl_context='adhoc')
-    

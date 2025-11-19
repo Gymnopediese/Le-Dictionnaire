@@ -1,5 +1,4 @@
-from marshmallow import Schema, fields
-
+from imports.extern import *
     
 class PasswordForgoten(Schema):
     email = fields.Str(required=True)

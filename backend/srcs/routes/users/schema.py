@@ -1,7 +1,4 @@
-
-from marshmallow import Schema, fields
-import enum
-
+from imports.extern import *
 
 class UpdateUser(Schema):
     password = fields.Str()

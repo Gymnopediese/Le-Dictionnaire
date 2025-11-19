@@ -2,9 +2,11 @@ from imports.services import *
 
 class Relationship(Model):
     
-    user = db.relationship('User', backref=db.backref('followings', cascade='all, delete-orphan'))
+
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    
-    target = db.relationship('User', backref=db.backref('followers', cascade='all, delete-orphan'))
     target_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
+    user = db.relationship('User', foreign_keys=[user_id], backref=db.backref('followings', cascade='all, delete-orphan'))
+    target = db.relationship('User', foreign_keys=[target_id], backref=db.backref('followers', cascade='all, delete-orphan'))
     

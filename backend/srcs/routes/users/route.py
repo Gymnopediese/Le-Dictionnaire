@@ -1,4 +1,4 @@
-from imports.models import *
+from imports.forapi import *
 
 security = [{"BearerAuth": []}]
 security = []
@@ -7,7 +7,7 @@ security = []
 class UsersAPI(MethodView):
     @users.doc(description="Get all users", security=security) 
     @users.arguments(UserListQuery, location="query")
-    @users.response(200, schema=UserListResponse)
+    @users.response(200)
     @jwt_required()
     def get(self, args):
         order_by = args.get("order_by", UserOrderByEnum.username)

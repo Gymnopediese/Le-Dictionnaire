@@ -10,11 +10,11 @@ class Suggestion(Model):
     
     state = db.Column(db.String())
     
-    terme = db.relationship('Terme', backref=db.backref('suggestions', cascade='all, delete-orphan'))
     terme_id = db.Column(db.Integer, db.ForeignKey('terme.id'), nullable=False)
+    target_id = db.Column(db.Integer,  db.ForeignKey('terme.id'), nullable=False)
     
-    target = db.relationship('Terme', backref=db.backref('termes_suggestion', cascade='all, delete-orphan'))
-    target_id = db.Column(db.Integer, db.ForeignKey('terme.id'), nullable=False)
+    target = db.relationship('Terme',  foreign_keys=[target_id], backref=db.backref('termes_suggestion', cascade='all, delete-orphan'))
+    terme = db.relationship('Terme', foreign_keys=[terme_id], backref=db.backref('suggestions', cascade='all, delete-orphan'))
     
     user = db.relationship('User', backref=db.backref('authors', cascade='all, delete-orphan'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

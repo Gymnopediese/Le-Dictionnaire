@@ -4,11 +4,20 @@ from functools import wraps
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt
+
+
+
 if os.getenv("FLASK_ENV") == "development":
     def jwt_required():
         def wrapper(fn):
             @wraps(fn)
             def decorator(*args, **kwargs):
+                for arg in args:
+                    if type(arg) != dict:
+                        continue
+                    for i in arg.keys():
+                        if "enum" in str(type(arg[i])):
+                            arg[i] = arg[i].value
                 return fn(*args, **kwargs)
             return decorator
         return wrapper

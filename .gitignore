@@ -11,4 +11,6 @@
 archive
 # .Env
 .env
+.venv
+node_modules
 backend/images/publications

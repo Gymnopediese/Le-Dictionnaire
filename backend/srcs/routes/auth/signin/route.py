@@ -1,5 +1,4 @@
-from imports.models import *
-
+from imports.forapi import *
 
 @auth.route('/signin', methods=['POST'])
 @auth.doc(description="Login to an existing account")

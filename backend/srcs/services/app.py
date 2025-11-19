@@ -15,7 +15,7 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.debug = True
 app.config["SECRET_KEY"] = os.environ["JWT_SECRET_KEY"]
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
-
+app.config["PREFERRED_URL_SCHEME"] = "https"
 
 
 @app.errorhandler(500)
@@ -38,7 +38,7 @@ def before_request():
     
     if request.method == 'OPTIONS' or request.method == 'options':
         return Response()
-    
+    pass
     # print(request.get_json())
 
 @app.after_request
@@ -51,14 +51,14 @@ def add_header(response):
 import traceback
 @app.errorhandler(Exception)
 def server_error(err: Exception):
-    print(traceback.format_exc(), file=sys.stderr)
+    # print(traceback.format_exc(), file=sys.stderr)
     print("Error: ", err)
     if len(err.args) == 0:
-        return jsonify(err.args[1]), err.args[0]
-    if len(err.args) and not type(err.args[0]) is dict:
+        return jsonify({}), 404
+    if len(err.args) > 1 and not type(err.args[0]) is dict:
         return jsonify(err.args[1]), err.args[0]
     app.logger.exception(err.args[0])
-    return jsonify(err.args[1]), 500
+    return jsonify({}), 500
 
 @app.route("/ping")
 def ping():

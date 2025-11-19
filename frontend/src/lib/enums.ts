@@ -1,9 +1,9 @@
 
 export var contenu_types = {
-    definitions: "definitions",
-    exemples: "exemples",
-    note: "note",
-    origine: "origine"
+    definitions: "Definitions",
+    exemples: "Exemples",
+    note: "Notes",
+    origine: "Origine"
 }
 
 export var genres = {
@@ -14,17 +14,34 @@ export var genres = {
 
 export var types = {
 
-    nom_commun: "nom_commun",
-    nom_propre: "nom_propre",
-    groupe_de_mot: "groupe_de_mot",
-    adjectif: "adjectif",
-    verbe: "verbe",
-    adverbe: "adverbe",
-    maxime: "maxime",
-    poesie: "poesie",
-    nouvelle: "nouvelle",
-    roman: "roman",
-    discution: "discution",
+    nom_commun: "n.",
+    nom_propre: "np.",
+    groupe_de_mot: "gm.",
+    adjectif: "a.",
+    verbe: "v.",
+    adverbe: "adv.",
+    maxime: "max.",
+    poesie: "p.",
+    nouvelle: "nvl.",
+    roman: "rm.",
+    discution: "d.",
+}
+
+export var langues = {
+    francais: "fr",
+    anglais: "an",
+    chinois: "ch",
+    latin: "la",
+    allemand: "al",
+    greque: "gr",
+}
+    
+export var contexts = {
+    grossier: "grossier",
+    famillier: "famillier",
+    neutre: "neutre",
+    soutenu: "soutenu",
+    ancien: "ancien",
 }
     
     

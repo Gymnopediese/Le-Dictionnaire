@@ -4,12 +4,7 @@ class User(Model):
 
     username = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(100), nullable=False)
-    
-    def serialize(self):
-        return {
-            "id": self.id,
-            "username": self.username,
-        }
+
     
     @staticmethod
     def hash(password):

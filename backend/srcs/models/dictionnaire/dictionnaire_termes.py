@@ -1,6 +1,6 @@
 from imports.services import *
 
-class DictionnaireTermes(Model):
+class DictionnaireTerme(Model):
 
     dictionnaire = db.relationship('Dictionnaire', backref=db.backref('termes', cascade='all, delete-orphan'))
     dictionnaire_id = db.Column(db.Integer, db.ForeignKey('dictionnaire.id'), nullable=False)

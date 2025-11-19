@@ -1,16 +1,20 @@
-from imports.models import *
+from imports.forapi import *
 
 @me.route('/')
 class MeAPI(MethodView):
+    
     @me.doc(description="Get me")
-    @me.response(200, schema=UserResponse)
-    @jwt_required()
-    def get(self):
-        current_user = get_jwt_identity()
-        user = User.query.get(current_user["id"])
-        if user:
-            return jsonify(user.serialize())
-        raise Exception(404, "User not found")
+    @me.response(200, schema=MeResponse)
+    @decorator(user_db=User)
+    def get(self, user):
+        """
+        Get the info of the user who made the request.
+        ---
+        responses:
+            200:
+                description: User
+        """
+        return jsonify(user.serialize(MeResponse))
     
     # @users.doc(description="Update a user by ID")
     # @users.arguments(UpdateUser)

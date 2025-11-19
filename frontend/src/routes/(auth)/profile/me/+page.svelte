@@ -1,6 +1,6 @@
 <script>
     import { get } from "$lib/api";
-    import Terme from "$lib/components/Terme.svelte";
+    import Terme from "$lib/components/TermeView.svelte";
 
     export let data;
     let terme;

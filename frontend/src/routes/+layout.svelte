@@ -5,39 +5,30 @@
     import { goto } from '$app/navigation';
     import { get, ping } from '$lib/api';
     import { onMount } from 'svelte';
+    import { user } from '$lib/global';
 	
 	let { children } = $props();
-    let decisionmade = false;
 
-
-    if (!load_cookies())
+    async function get_me()
     {
-        console.log(cookies);
-        // onMount(async () => {
-        // //    console.log("ping ",  await get("/ping"))
-        //     var user = await get("/me");
-        //     console.log(user);
-        // })
-        if (cookies.token)
-        {
-            decisionmade = true;
-        }
-        else
-        {
-            console.log("mais")
-            decisionmade = true;
-            goto('/login');
-        }
+        $user = await get("/me/");
+        console.log($user);
+    } 
 
-
+    if (!load_cookies() && !cookies.token)
+    {
+        goto('/login');
     }
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
+{#await get_me()}
+    
+{:then _} 
+    {@render children()}
+{/await}
 
-<!-- {#if decision_made} -->
-{@render children()}
-<!-- {/if} -->
+
 <!-- TODO : add loading icon whatever. -->

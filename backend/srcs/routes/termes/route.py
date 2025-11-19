@@ -1,0 +1,46 @@
+from imports.forapi import *
+
+@termes.route('/')
+class TermesAPI(MethodView):
+    @termes.doc(description="Get all termes")
+    @termes.response(200)
+    @jwt_required()
+    def get(self):
+        termes = Terme.query.all()
+        if termes:
+            return jsonify([terme.serialize() for terme in termes])
+        raise Exception(404, "User not found")
+    
+    @termes.doc(description="Create a user by ID")
+    @termes.arguments(TermeCreate)
+    @termes.response(200, schema=TermeResponse)
+    @decorator(user=True)
+    def post(self, args, user):
+        # for id in args["dictionnaires"]:
+        #     dictionnaire = Dictionnaire.query.get(id)
+        #     if not dictionnaire:
+        #         raise Exception(404, "Not a valid dictionnary")
+        #     dictionnaire.put_allowed(user["id"])
+        #     dictionnaire_link = DictionnaireTerme(dictionnaire_id=id, terme_id=terme.id)
+        #     db.session.add(dictionnaire_link)
+        # db.session.commit()
+        
+        terme = Terme(
+            name=args["name"],
+            genre=args["genre"],
+            type=args["type"],
+            content=Terme.join_paragraphs(args["paragraphs"]),
+        )
+        db.session.add(terme)
+        db.session.commit()
+
+        author = Author(
+            terme=terme,
+            user_id=user["id"],
+        )
+        db.session.add(author)
+        db.session.commit()
+        Version.new(terme)
+        return jsonify(terme.serialize(TermeResponse))
+
+

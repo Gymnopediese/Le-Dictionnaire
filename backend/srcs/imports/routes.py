@@ -1,33 +1,15 @@
-
-
-# from api.comments.post import *
-# from api.comments.put import *
-# from api.comments.delete import *
-
-from api.auth.signin import *
-from api.auth.signup import *
-from api.auth.password import *
-
-# from api.stickers.stickers import *
-# from api.comments.get import *
-
-# from api.publications.publications import *
-# from api.publications.put import *
-# from api.publications.delete import *
-# from api.publications.get import *
-
-# from api.users.post import *
-# from api.users.put import *
-# from api.users.delete import *
-from api.users.users import *
-# from api.users.login.post import *
-# from api.users.signup.post import *
-# from api.users.password.post import *
-
-from api.me import *
-from api.termes import *
-# from api.me.put import *
-# from api.me.delete import *
-
-# from api.likes.post import *
-
+srcs_routes = False
+if not srcs_routes:
+	from routes.users.route import *
+	from routes.users._id_.route import *
+	from routes.auth.password.route import *
+	from routes.auth.signin.route import *
+	from routes.auth.signup.route import *
+	from routes.me.route import *
+	from routes.termes.route import *
+	from routes.termes._id_.route import *
+	from routes.termes._id_.dictionnaires.route import *
+	from routes.dictionnaires.route import *
+	from routes.dictionnaires._id_.route import *
+	from routes.test.route import *
+	srcs_routes = True

@@ -1,0 +1,22 @@
+from imports.enums import *
+
+class ParagraphCreate(Schema):
+    name = fields.Str(required=True)
+    contents = fields.List(fields.Str(required=True))
+
+class TermeCreate(Schema):
+    name = fields.Str(required=True)
+    genre = fields.Enum(TermeGenre)
+    type = fields.Enum(TermeTypes)
+    context = fields.Enum(TermeContext)
+    language = fields.Str(required=True)
+    # dictionnaires = fields.List(fields.Int(),required=True)
+    paragraphs = fields.List(fields.Nested("ParagraphCreate"),required=True)
+    
+class TermeResponse(Schema):
+    name = fields.Str(required=True)
+    type = fields.Enum(TermeTypes,required=True)
+    genre = fields.Enum(TermeGenre,required=True)
+    contents = fields.List(fields.Str(),required=True)
+    language = fields.Str(required=True)
+    

@@ -12,3 +12,6 @@ flask-cors
 flask-smorest
 pillow
 pyopenssl
+Flask-Migrate
+GitPython
+dotenv

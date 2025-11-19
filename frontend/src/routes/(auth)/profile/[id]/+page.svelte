@@ -1,6 +1,5 @@
 <script>
     import { get } from "$lib/api";
-    import Terme from "$lib/components/Terme.svelte";
 
     export let data;
     let user;

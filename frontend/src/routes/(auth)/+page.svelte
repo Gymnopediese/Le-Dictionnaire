@@ -1,6 +1,6 @@
 <script lang="ts">
     import { del, get } from "$lib/api";
-    import Terme from "$lib/components/Terme.svelte";
+    import TermeView from "$lib/components/TermeView.svelte";
 
 
     var termes          : any;
@@ -16,5 +16,5 @@
 
 </script>
 {#each termes as terme}
-    <Terme terme={terme}></Terme>
+    <TermeView terme_object={terme}></TermeView>
 {/each}

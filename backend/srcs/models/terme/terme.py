@@ -5,7 +5,7 @@ from models.dictionnaire.dictionnaire import *
 class Terme(Model):
     
     name = db.Column(db.String(100), nullable=False)
-    genre = db.Column(db.String(100), nullable=False)
+    # genre = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(100), nullable=False)
     language = db.Column(db.String(100))
     context = db.Column(db.String(100))

@@ -13,9 +13,9 @@
     console.log(options)
 </script>
 <div >
-{#if label}
+<!-- {#if label}
     <label for="">{label}</label>
-{/if}
+{/if} -->
 
 {#if $view_mode == "edit"}
 <!-- style="float: {align}; width:{width};font-size:{font_size}; height:{height};" -->
@@ -38,6 +38,7 @@ input, input:focus, label, div {
 }
 
 div {
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -58,6 +59,7 @@ label, input:focus, input, datalist {
     padding: 0;
     margin: 0;
 }
+
 
 
 /* hr {

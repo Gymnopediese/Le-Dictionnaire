@@ -30,10 +30,16 @@
             {
                 content.addEventListener('input', () => {
                     content.style.height = 'auto';
-                    content.style.height = content.scrollHeight + 'px';
+                    var count = (content.value.match(/\n/g)|| []).length + 1
+                    content.style.height = count * 40 + 'px';
+                content.style.height = content.scrollHeight + 'px';
                 });
                 content.style.height = 'auto';
                 content.style.height = content.scrollHeight + 'px';
+                var count = (content.value.match(/\n/g)|| []).length + 1
+                content.style.height = count * 40 + 'px';
+                content.style.height = content.scrollHeight + 'px';
+                // console.log(content.scrollHeight)
             }
         }
 
@@ -441,45 +447,46 @@
 </script>
 
 <main>
+    <div class="content">
 {#if $view_mode == "edit"}
-    <input bind:value={terme.name_value} bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="name"><br>
-    <button on:click={() => terme.toggle_button()}>save</button>
+    <div class="name_div">
+        <input bind:value={terme.name_value} bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="Nom..."><br>
+    </div>
+    <!-- <button on:click={() => terme.toggle_button()}>save</button> -->
 {:else}
     <label bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="name">{terme.name_value}</label><br>
-    <button on:click={toggle_view_mode}>edit</button>
+    <!-- <button on:click={toggle_view_mode}>edit</button> -->
 {/if}
-<hr>
-<InputChoice class_name="metadata_input" bind:value={terme.genre_value} bind:input={terme.genre} label={"Genre\t: "}   align="right" width="93%" placeholder="genre..." options={Object.keys(genres)} ></InputChoice>
-<hr>
-<InputChoice class_name="metadata_input" bind:value={terme.type_value} bind:input={terme.type} label={"Type\t\t: "}    align="right" width="93%" placeholder="type..." options={Object.keys(types)} ></InputChoice>
-<hr>
-<InputChoice class_name="metadata_input" bind:value={terme.context_value} bind:input={terme.context} label={"Context\t: "} align="right" width="93%" placeholder="context..." options={Object.keys(contexts)} ></InputChoice>
-<hr>
-<InputChoice class_name="metadata_input" bind:value={terme.langue_value} bind:input={terme.langue} label={"Langue\t: "}  align="right" width="93%" placeholder="langue..." options={Object.keys(langues)} ></InputChoice>
-<hr>
-<InputChoice class_name="metadata_input" bind:value={terme.dictionnaire_value} bind:input={terme.dictionnaire}  label={"Dico\t\t: "}  align="right" width="93%" placeholder="langue..." options={dico_name} ></InputChoice>
-<hr>
+
+<!-- <InputChoice class_name="metadata_input" bind:value={terme.genre_value} bind:input={terme.genre} label={"Genre\t: "}   align="right" width="93%" placeholder="genre..." options={Object.keys(genres)} ></InputChoice> -->
+<div class="metadata_div">
+    <InputChoice class_name="metadata_input" bind:value={terme.type_value} bind:input={terme.type} label={"Type\t\t: "}    align="right" width="93%" placeholder="type..." options={Object.keys(types)} ></InputChoice>
+    <InputChoice class_name="metadata_input" bind:value={terme.context_value} bind:input={terme.context} label={"Context\t: "} align="right" width="93%" placeholder="context..." options={Object.keys(contexts)} ></InputChoice>
+    <InputChoice class_name="metadata_input" bind:value={terme.langue_value} bind:input={terme.langue} label={"Langue\t: "}  align="right" width="93%" placeholder="langue..." options={Object.keys(langues)} ></InputChoice>
+</div>
+<!-- <InputChoice class_name="metadata_input" bind:value={terme.dictionnaire_value} bind:input={terme.dictionnaire}  label={"Dico\t\t: "}  align="right" width="93%" placeholder="langue..." options={dico_name} ></InputChoice> -->
+<!-- <hr> -->
 {#key terme.paragraphs.length}
 {console.log("mmm ", terme.paragraphs.length)}
 {#each Array(terme.paragraphs.length) as _, x}
+        {#if x != 0}
         <div class="paragraph_name_div" >
             <div style="width:95%;">
             <InputChoice class_name="paragraph_name_input"  placeholder="Paragraphe name..." options={contenu_types} bind:input={terme.paragraphs[x].name} bind:value={terme.paragraphs[x].name_value} > </InputChoice>
-            <hr>
             </div>
             <button on:click={() => terme.change_paragraph_amount(x, -1)} style="margin:1%;">X</button>
         </div>
+        {/if}
         {#key terme.paragraphs[x].contents.length}
             {#each Array(terme.paragraphs[x].contents.length) as _, y}
                 <div class="contents_div" >
                     <textarea style="width:95%;" class="content_input" bind:value={terme.paragraphs[x].contents_value[y]} bind:this={terme.paragraphs[x].contents[y]} name="contenu" id="1" placeholder="contenu" ></textarea>
                     <button on:click={() => terme.change_paragraph_content_amount(x, y, -1)} style="margin:1%; max-height:3.3dvh; align:center;">X</button>
                 </div>
-                <!-- <br> -->
             {/each}
         {/key}
         <!-- <button on:click={() => change_content_amount(x, -1)} >-</button> -->
-        <button class="content_plus" on:click={() => terme.change_paragraph_content_amount(x, -1, 1)} >+ Contenu</button><br>
+        <!-- <button class="content_plus" on:click={() => terme.change_paragraph_content_amount(x, -1, 1)} >+ Contenu</button><br> -->
 
 {/each}
     
@@ -487,6 +494,7 @@
     
 <!-- <button on:click={() => change_paragraph_amount(-1)} >-</button> -->
  <br>
+ 
 <button class="plus" on:click={() => terme.change_paragraph_amount(-1, 1)} >+ Paragraphe</button><br>
 
 <br>
@@ -494,17 +502,55 @@
 <br> -->
 
 <button on:click={()=>terme.post()}>create terme</button>
-
+</div>
 </main>
 <style>
 
+    .name_div {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .metadata_div {
+        margin-top: 38px;
+        margin-bottom:38px;
+        margin-left: 75px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    main {
+        width: 100%;
+        height: 100%;
+        background-color: rgba(250, 248, 243, 1);
+        background-image: 
+            linear-gradient(#cdcdcd 2px, transparent 2px),
+            linear-gradient(#e4e3e1 1px, transparent 1px),
+            linear-gradient(90deg, #e1c9c9 2px, transparent 2px);
+        background-size: 200px 200px, 40px  40px, 5000px,  5000px;
+        background-position: -2px -120px, -1px 2px, -4930px, -2px;
+    }
+
     #name, #name:focus {
+        margin-left: 75px;
+        background-color: unset;
         width: 100%;
         height: auto;
-        font-size: 8dvh;
+        font-size: 80px;
         border: none;
         outline: none;
+        color: #a7a299;
         /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif */
+    }
+
+    .content {
+        /* margin-left: 73px; */
     }
 
     .contents_div
@@ -518,31 +564,47 @@
 
     .paragraph_name_div
     {
+        margin-left: 75px;
         display:flex;
 
     }
-    main :global(.metadata_input) {
-        width: 80%;
-        font-size: 3dvh;
-        height: 5dvh;
+    .metadata_div :global(.metadata_input) {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-size: 34px;
+        height: 40px;
         vertical-align: center;
         
     }
-     main :global(.paragraph_name_input) {
+    main :global(.paragraph_name_input) {
         width: 90%;
-        font-size: 5dvh;
-        height: 6dvh;
+        margin-top: 20px;
+        font-size: 56px;
+        height: 60px;
     }
 
     .content_input {
+
+        line-height: 100px;
+        all: unset;
+        margin-left: 75px;
+        margin-bottom: 40px;
         width: 95%;
-        font-size: 2.5dvh;
+        height: 40px;
+        font-size: 32px;
         border: none;
         outline: none;
         resize: none; /* désactive le redimensionnement utilisateur */
         overflow: hidden; /* cache la scrollbar */
         /* height: fit-content; */
         /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif */
+    }
+
+    .name_label {
+        margin-left: 10px;
+        margin-top: 10px;
+        width: 73px;
     }
 
 

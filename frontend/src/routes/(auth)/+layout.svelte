@@ -3,35 +3,70 @@
     import { goto } from "$app/navigation";
     import { user } from "$lib/global"
 
+    var visibility = $state(true);
+
 </script>
 
 <link rel="stylesheet" href="https://fonts.bunny.net/css?family=source-serif-pro:400,600,700" />
 
 
 <main class="container">
-
+    <!-- {#key visibility} -->
+        
     <section class="meta">
-        <!-- Vos items WRITING / READING / WATCHING… -->
-    
+        <div class="navbar {visibility ? "" : "hide"}">
 
-<div class="navbar">
-    <button on:click={()=>goto("/")}>Main</button>
-    <button on:click={()=>goto("/dictionnaires")}>Dictionnaires</button>
-    <button on:click={()=>goto("/")}>Users</button>
-    <button on:click={()=>goto("/create")}>Create</button>
-</div>
-</section>
+            <button class="{visibility ? "show_button" : ""}" on:click={()=>visibility = !visibility}>Hide</button>
+
+            <button class="{visibility ? "" : "hide_button"}" on:click={()=>visibility = !visibility}>Hide</button>
+            <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/")}>Main</button>
+            <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/dictionnaires")}>Dictionnaires</button>
+            <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/")}>Users</button>
+            <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/create")}>Create</button>
+        </div>
+
+
+
+        <div class="content">
+            <slot></slot>
+        </div>
+    </section>
+    <!-- {/key} -->
+
 </main>
-
-<div class="content">
-    <slot></slot>
-</div>
 <style>
+    @keyframes slidein {
+        from {
+            width: 10%;
+            /* margin: 1%;  */
+            padding: 1%; 
+        }
+
+        to {
+            width: 1%;
+            margin: 0;
+            padding: 0;
+        }
+    }
+
+    @keyframes hide {
+        from {
+            opacity: 1;
+            /* margin: 1%;  */
+            /* padding: 1%;  */
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+
 
     .content {
         overflow: scroll;
-        width: 100%;
-        height:85vh;
+        width: 98%;
+        height:96vh;
         padding: 0;
         margin:0;
         border: #e4e4e4 solid 2px;
@@ -56,20 +91,43 @@
         all: unset;
     }
 
+section {
+
+    display: flex;
+}
+
+
 
 .navbar {
-    width: 96%;
+    width: 10%;
     display: flex;
     align-items: center;
+    flex-direction: column;
+    position: relative;
     gap: 20px;
     list-style-type: none;
     overflow: hidden;
-    margin: 2%; 
+    /* margin: 1%;  */
+    padding: 1%;
     align-items: center;
      justify-content: center;
     color: rgb(212, 196, 176);
     font-size: 16px;
   /* background-color: #333333; */
+}
+
+.hide_button {
+    animation-duration: 0.5s;
+    animation-name: hide;
+    opacity: 0;
+}
+
+.hide {
+    animation-duration: 1s;
+    animation-name: slidein;
+    width: 1%;
+    margin: 0;
+    padding: 0;
 }
 
     button:hover {

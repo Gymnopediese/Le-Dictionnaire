@@ -20,8 +20,5 @@
     loading data
 {:then terme} 
     <TermeView terme_object={terme} ></TermeView>
-    <link
-  rel="stylesheet"
-  href="https://unpkg.com/98.css"
->
+
 {/await}

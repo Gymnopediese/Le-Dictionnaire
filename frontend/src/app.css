@@ -7,6 +7,7 @@ html {
 }
 
 body {
-        background-color: rgba(250, 248, 243, 0.8);
+    color: rgb(163, 149, 133);
+    background-color: rgba(250, 248, 243, 0.8);
     font-family: "Source Serif Pro", serif;
 }

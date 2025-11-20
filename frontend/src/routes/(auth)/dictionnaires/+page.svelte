@@ -33,7 +33,8 @@
 
     .dictionnaires {
         display: grid;
-        grid-row: auto;
+        grid-template-columns: repeat(3, 33%);
+        /* grid-row: auto; */
     }
 
     .dictionnaire {

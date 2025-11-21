@@ -19,9 +19,13 @@ class Dictionnaire(Model):
 
     def put_allowed(self, current_user_id):
         for owner in self.ownerships:
+            print(owner.id, current_user_id)
             if owner.id == current_user_id:
                 return
         raise Exception(405, "User not allowed")
+
+    def delete_allowed(self, current_user_id):
+        return self.put_allowed(current_user_id)
     # ownerships
     # termes
     

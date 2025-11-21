@@ -9,7 +9,6 @@ class TermeCreate(Schema):
     type = fields.Enum(TermeTypes)
     context = fields.Enum(TermeContext)
     language = fields.Str(required=True)
-    # dictionnaires = fields.List(fields.Int(),required=True)
     paragraphs = fields.List(fields.Nested("ParagraphCreate"),required=True)
     
 class TermeResponse(Schema):

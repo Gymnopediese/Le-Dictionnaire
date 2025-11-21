@@ -24,17 +24,19 @@ class TermeDictionnaireAPI(MethodView):
     
     @termes.doc(description="Delete a user by ID")
     @termes.response(204)
+    @termes.arguments(TermeDictionnaireCreate)
     @decorator(object=Terme, user=True)
     def delete(self, args, object, user):
-        for id in args["dictionnaire"]:
+        for id in args["dictionnaires"]:
             dictionnaire = Dictionnaire.query.get(id)
             if not dictionnaire:
                 raise Exception(404, "ressource does not exist")
             dictionnaire.delete_allowed(user["id"])
-            link = DictionnaireTerme.query.filter_by(dictionnaire_id=dictionnaire.id, terme_id=self.id).first()
+            link = DictionnaireTerme.query.filter_by(dictionnaire_id=dictionnaire.id, terme_id=object.id).first()
             if not link:
                 continue
-            db.session.remove(link)
+            db.session.delete(link)
+        db.session.commit()
         return jsonify({})
     
     

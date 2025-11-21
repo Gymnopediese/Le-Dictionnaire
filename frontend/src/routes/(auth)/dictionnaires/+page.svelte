@@ -1,6 +1,6 @@
 <script>
-    import { get } from "$lib/api";
-    import { user } from "$lib/global";
+    import { get } from "$lib/services/api";
+    import { user } from "$lib/services/global";
     import InputChoice from "$lib/components/InputChoice.svelte";
     import { goto } from "$app/navigation";
 

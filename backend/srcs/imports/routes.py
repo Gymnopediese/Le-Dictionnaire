@@ -6,6 +6,7 @@ if not srcs_routes:
 	from routes.dictionnaires.route import *
 	from routes.dictionnaires._id_.route import *
 	from routes.me.route import *
+	from routes.me.termes.route import *
 	from routes.termes.route import *
 	from routes.termes._id_.route import *
 	from routes.termes._id_.dictionnaires.route import *

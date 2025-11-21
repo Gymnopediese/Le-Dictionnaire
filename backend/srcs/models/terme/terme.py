@@ -88,3 +88,9 @@ class Terme(Model):
             if author.user_id == current_user_id:
                 return
         raise Exception(405, "not allowed to access ressource")
+
+    def delete_allowed(self, current_user_id):
+        for author in self.authors:
+            if author.user_id == current_user_id:
+                return
+        raise Exception(405, "not allowed to delete ressource links")

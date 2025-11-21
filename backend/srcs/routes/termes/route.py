@@ -27,8 +27,9 @@ class TermesAPI(MethodView):
         
         terme = Terme(
             name=args["name"],
-            genre=args["genre"],
             type=args["type"],
+            language=args["language"],
+            context=args["context"],
             content=Terme.join_paragraphs(args["paragraphs"]),
         )
         db.session.add(terme)

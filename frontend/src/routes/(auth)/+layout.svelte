@@ -1,7 +1,7 @@
 
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { user } from "$lib/global"
+    import { popup, user } from "$lib/services/global"
 
     var visibility = $state(true);
 
@@ -20,6 +20,7 @@
 
             <button class="{visibility ? "" : "hide_button"}" on:click={()=>visibility = !visibility}>Hide</button>
             <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/")}>Main</button>
+            <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/profile/me")}>Me</button>
             <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/dictionnaires")}>Dictionnaires</button>
             <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/")}>Users</button>
             <button class="{visibility ? "" : "hide_button"}" on:click={()=>goto("/create")}>Create</button>
@@ -33,8 +34,22 @@
     </section>
     <!-- {/key} -->
 
+
+
 </main>
 <style>
+
+    .popup {
+        position: absolute;
+        left: 10%;
+        top: 10%;
+        width: 80%;
+        height: 80%;
+        border: rgb(65, 65, 65) solid 2px;
+        border-radius: 2%;
+        background-color: rgb(213, 214, 209);
+    }
+
     @keyframes slidein {
         from {
             width: 10%;

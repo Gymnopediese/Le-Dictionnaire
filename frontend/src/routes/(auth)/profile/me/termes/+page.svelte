@@ -7,7 +7,7 @@
     let dico;
     async function try_get_terme()
     {
-        dico = await get("/dictionnaires/" + data.id + "");
+        dico = await get("/me/termes");
         console.log(dico.termes[0])
         return dico;
     }

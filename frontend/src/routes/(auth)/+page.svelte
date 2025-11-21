@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { del, get } from "$lib/api";
+    import { del, get } from "$lib/services/api";
     import TermeView from "$lib/components/TermeView.svelte";
 
 

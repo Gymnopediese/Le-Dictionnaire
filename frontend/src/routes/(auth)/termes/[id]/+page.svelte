@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { get } from "$lib/api";
+    import { get } from "$lib/services/api.js";
     import TermeView from "$lib/components/TermeView.svelte";
 
     export let data;
@@ -7,7 +7,6 @@
     async function try_get_terme()
     {
         terme = await get("/termes/" + data.id);
-        console.log("j'ai les termes", terme)
         return terme;
     }
 

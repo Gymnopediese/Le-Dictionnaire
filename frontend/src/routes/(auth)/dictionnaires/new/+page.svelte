@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { post } from "$lib/api";
+    import { post } from "$lib/services/api";
 
     
     import InputChoice from "$lib/components/InputChoice.svelte";

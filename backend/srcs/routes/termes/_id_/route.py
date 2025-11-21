@@ -11,10 +11,9 @@ class TermeAPI(MethodView):
     
     @termes.doc(description="Update a temre by ID or Secret")
     @termes.arguments(TermeCreate)
-    @termes.response(200, schema=UserResponse)
+    @termes.response(200)
     @decorator(object=Terme, user=True)
     def put(self, args, object, user):
-        print(args)
         args["content"] = Terme.join_paragraphs(args["paragraphs"])
         object.put_allowed(user["id"])
         object.put(args)

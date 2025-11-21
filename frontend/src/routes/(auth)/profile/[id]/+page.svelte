@@ -1,5 +1,5 @@
 <script>
-    import { get } from "$lib/api";
+    import { get } from "$lib/services/api.js";
 
     export let data;
     let user;

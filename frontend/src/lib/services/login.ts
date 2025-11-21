@@ -1,6 +1,6 @@
 import { goto } from "$app/navigation";
 import { post } from "./api";
-import { set_cookie } from "./cookies";
+import { set_cookie } from "$lib/services/cookies";
 
 export async function signin(username: String, password: String)
 {

@@ -1,5 +1,5 @@
 import { goto } from "$app/navigation";
-import { cookies, remove_cookie,  } from "./cookies";
+import { cookies, remove_cookie,  } from '$lib/services/cookies';
 
 export async function ping()
 {
@@ -75,7 +75,7 @@ export async function post(route: string, body: any, token_needed: boolean = fal
     return await protection(result, token_needed);
 }
 
-export async function del(route: string)
+export async function del(route: string, body: any = {})
 {
     if (!preprotection()) return
     var result = await fetch("/api" + route, {
@@ -84,6 +84,7 @@ export async function del(route: string)
             'Content-Type': 'application/json',
             'Authorization': "Bearer " + cookies.token,
         },
+        body: JSON.stringify(body),
     })
     return await protection(result);
 }

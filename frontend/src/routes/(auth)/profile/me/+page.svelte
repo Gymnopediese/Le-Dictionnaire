@@ -1,21 +1,12 @@
 <script>
-    import { get } from "$lib/api";
-    import Terme from "$lib/components/TermeView.svelte";
-
-    export let data;
-    let terme;
-    async function try_get_terme()
-    {
-        terme = await get("/me");
-        console.log(terme)
-        return terme;
-    }
+    import { goto } from "$app/navigation";
+    import { get } from "$lib/services/api"; 
+    import { user } from "$lib/services/global.js";
 
 </script>
 
 
-{#await try_get_terme()}
-    loading data
-{:then terme} 
-    <Terme terme={terme}> </Terme>
-{/await}
+{$user.username}
+<button on:click={()=> goto("/profile/me/termes")}>
+    termes
+</button>

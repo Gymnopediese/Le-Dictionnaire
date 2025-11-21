@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { view_mode } from "$lib/global";
+    import { view_mode } from "$lib/services/global";
 
 
     export var label        : string = "";

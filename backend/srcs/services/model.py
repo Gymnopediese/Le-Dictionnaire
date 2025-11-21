@@ -56,16 +56,16 @@ class Model(db.Model):
 
 
     def get_allowed(self, current_user_id):
-        raise Exception(500, "'get_allowed' not implemented for object of type ", type(self))
+        raise Exception(500, f"'get_allowed' not implemented for object of type {str(type(self))}")
         
     def post_allowed(self, current_user_id):
-        raise Exception(500, "'post_allowed' not implemented for object of type ", type(self))
+        raise Exception(500, f"'post_allowed' not implemented for object of type {str(type(self))}")
         
     def put_allowed(self, current_user_id):
-        raise Exception(500, "'put_allowed' not implemented for object of type ", type(self))
+        raise Exception(500, f"'put_allowed' not implemented for object of type {str(type(self))}")
     
     def delete_allowed(self, current_user_id):
-        raise Exception(500, "'delete_allowed' not implemented for object of type ", type(self))
+        raise Exception(500, f"'delete_allowed' not implemented for object of type {str(type(self))}")
     
         
 

@@ -4,6 +4,8 @@ var terme           : Terme;
 var current_input   : any;
 var input           : any;
 var input_type      : any;
+var args            : any;
+
 
 function getKey(e: KeyboardEvent) {
     return (e.shiftKey ? "Shift+" : "") + (e.metaKey ? "Meta+" : "") + e.key;
@@ -18,9 +20,13 @@ const handlers: Record<string, (e: KeyboardEvent) => void> = {
 
     "Meta+d" : e => {
         stop(e);
-        terme.toggle_button()
+        args.show_dict_popup()
     },
 
+    "Meta+s" : e => {
+        stop(e);
+        terme.put()
+    },
 
     "Tab": e => {
         stop(e);
@@ -43,11 +49,16 @@ const handlers: Record<string, (e: KeyboardEvent) => void> = {
 
     "Backspace": e => {
         let p = terme.get_paragraphe_x(input);
-        if (p !== -1 &&
+        let c = terme.get_content_x(input);
+        if ((p !== -1 || c !== -1) &&
             terme.inputs_value[current_input].name_value === "" &&
             terme.inputs_value[current_input].content_value === "") {
             stop(e);
             terme.change_paragraph_amount(p, -1);
+        }
+        else if (input.selectionStart == 0 && input.selectionEnd == 0) {
+            stop(e);
+            terme.focus(current_input, -1);
         }
     },
 
@@ -89,11 +100,12 @@ function stop(e: KeyboardEvent) {
     e.stopPropagation();
 }
 
-export function edit_view_event_manage(e: KeyboardEvent, t: Terme) {
+export function edit_view_event_manage(e: KeyboardEvent, t: Terme, a: any) {
     terme = t;
     input = document.activeElement;
     input_type = input.tagName.toLowerCase();
     current_input = terme.inputs.indexOf(input);
+    args = a;
 
     const key = getKey(e);
     const h = handlers[key];

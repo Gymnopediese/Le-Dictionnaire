@@ -10,3 +10,6 @@
 <button on:click={()=> goto("/profile/me/termes")}>
     termes
 </button>
+<button on:click={()=> goto("/profile/me/drafts")}>
+    drafts
+</button>

@@ -100,6 +100,5 @@ class Model(db.Model):
             for key, pair in rt.items():
                 if key != schema.__dict__["_final"]:
                     res[key] = pair
-        print("c finit",res)
         return res
 

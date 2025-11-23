@@ -11,3 +11,32 @@ body {
     background-color: rgba(250, 248, 243, 0.8);
     font-family: "Source Serif Pro", serif;
 }
+
+button {
+    all: unset;
+    cursor: pointer;
+
+    padding: 18px 38px;
+    margin: 20px;
+
+    font-size: 32px;
+    font-family: "Source Serif Pro", serif;
+    color: #5c544b;
+
+    background-color: #e8dfd3;
+    border: 2px solid #b8a898;
+    border-radius: 4px;
+
+    box-shadow:
+        3px 3px 0px #b8a898,
+        inset 0 0 0 2px rgba(255,255,255,0.4);
+
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow:
+        1px 1px 0px #b8a898,
+        inset 0 0 0 2px rgba(255,255,255,0.4);
+}

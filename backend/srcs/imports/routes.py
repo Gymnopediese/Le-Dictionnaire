@@ -5,6 +5,8 @@ if not srcs_routes:
 	from routes.auth.signup.route import *
 	from routes.dictionnaires.route import *
 	from routes.dictionnaires._id_.route import *
+	from routes.dictionnaires._id_.termes._id2_.route import *
+	from routes.dictionnaires.me.route import *
 	from routes.me.route import *
 	from routes.me.termes.route import *
 	from routes.termes.route import *

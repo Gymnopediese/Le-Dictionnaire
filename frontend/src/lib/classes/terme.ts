@@ -1,5 +1,6 @@
 import { del, post, put } from "$lib/services/api";
 import { get_writable, toggle_view_mode, view_mode } from "$lib/services/global";
+import { json } from "@sveltejs/kit";
 import { writable, type Writable } from "svelte/store";
 
 export class Paragraph
@@ -72,7 +73,14 @@ export default class Terme
     new             : boolean = false;
     remove          : boolean = false
     error           : Writable<string> = writable("");
-    constructor(terme, reactive)
+    draft_id        : string = "";
+    
+    constructor(terme)
+    {
+        this.init(terme);
+    }
+
+    init(terme)
     {
         if (terme == undefined)
         {
@@ -83,7 +91,8 @@ export default class Terme
         }
         this.terme = terme;
         console.log(terme)
-        this.id = terme.id;
+        this.id = terme.id ?? -1;
+        this.draft_id = terme.draft_id ?? "";
         this.name_value = terme.name;
         this.type_value = terme.type;
         this.context_value = terme.context;
@@ -95,9 +104,17 @@ export default class Terme
 
         this.set_inputs();
     }
-
     payload()
     {
+
+        for (let input of this.inputs)
+        {
+            if (input.value === "")
+            {
+                throw (`Cannot save empty fieds, ${input}`)
+            }
+        }
+        console.log("saving")
         return { terme : {
             name: this.name.value,
             // genre: this.genre.value,
@@ -115,9 +132,9 @@ export default class Terme
     }
     async post()
     {
-        var payload = this.payload()
         try {
 
+            var payload = this.payload()
             var terme = await post("/termes/", payload["terme"]);
             this.id = terme.id;
             // await put(`/termes/${this.id}/dictionnaires`, payload["dictionnaires"]);
@@ -130,18 +147,40 @@ export default class Terme
         return true
     }
 
+    draft()
+    {
+        if (this.draft_id == "")
+            this.draft_id = "draft_" + String(Math.round(Math.random() * 100000000000))
+        var payload = this.payload()
+        localStorage.setItem(this.draft_id, JSON.stringify(payload.terme))
+    }
+
+    load_draft()
+    {
+        if (this.draft_id == "")
+            return;
+        var terme = localStorage.getItem(this.draft_id)
+        this.init(terme);
+    }
+
+    del_draft()
+    {
+        localStorage.removeItem(this.draft_id);
+    }
+
 
     async put()
     {
         if (this.id == -1)
-            return this.post()
-
-        var payload = this.payload()
+            return this.draft()
+        this.del_draft()
         try {
+            var payload = this.payload()
             await put(`/termes/${this.id}`, payload["terme"]);
             // await put(`/termes/${this.id}/dictionnaires`, payload["dictionnaires"]);
         } catch (e: any){
             this.error.update(()=>e);
+            console.log(e)
             return false
         }
         return true;
@@ -186,8 +225,10 @@ export default class Terme
 
     focus(index, shift)
     {
-        if (index + shift < 0 || index + shift >= this.inputs.length)
-            return        
+        if (index + shift < 0)
+            index += this.inputs.length
+        if (index + shift >= this.inputs.length)
+            index -= this.inputs.length
         this.inputs[index + shift].focus()
     }
 

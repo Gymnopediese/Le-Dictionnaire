@@ -5,11 +5,19 @@
     import { langues, types } from "$lib/services/enums.js";
 
     export let data;
-    let dico;
+    let dico = {termes:[]};
     async function try_get_terme()
     {
-        dico = await get("/me/termes");
-        console.log(dico.termes[0])
+
+        var i = 0;
+        while (i <  localStorage.length)
+        {
+            var key = localStorage.key(i);
+            var t = JSON.parse(localStorage.getItem(key));
+            t.id = "drafts/" + key
+            dico.termes.push(t);
+            i += 1;
+        }
         return dico;
     }
 
@@ -21,7 +29,7 @@
 {:then dictionnaire} 
     <Dictionnaire dico= {
         {
-            name: "all my termes",
+            name: "all my ",
             description: "all the termes I ever wrote",
             termes: dictionnaire.termes,
         }

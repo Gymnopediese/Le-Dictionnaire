@@ -1,12 +1,12 @@
 from imports.forapi import *
 
-@dictionnaires.route('/<string:id>')
-class DictionnaireApi(MethodView):
+@dictionnaires.route('/me')
+class DictionnaireMeApi(MethodView):
     
     @dictionnaires.doc(description="Get a particular dictionnary")
     @dictionnaires.response(200, schema=DictionnaireFinalResponse)
-    @decorator(object=Dictionnaire)
-    def get(self, object):
+    @decorator()
+    def get(self):
         """
         Get all content need for a particular dictionnary.
         ---
@@ -14,5 +14,5 @@ class DictionnaireApi(MethodView):
             200:
                 description: User
         """
-        return object.serialize(DictionnaireResponse)
+        return redirect("/api/me/termes", code=302)
     

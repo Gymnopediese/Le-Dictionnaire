@@ -14,6 +14,7 @@ class MeTermesAPI(MethodView):
             200:
                 description: User
         """
+        print("ouais c bon j'ai !")
         return jsonify(user.serialize(MeGetTermesResponse))
     
     # @users.doc(description="Update a user by ID")

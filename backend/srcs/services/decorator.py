@@ -1,7 +1,7 @@
 from functools import wraps
 from services.jwt import *
 from flask import request
-def decorator(user=False, user_db=None, object=None, check_jwt=True):
+def decorator(user=False, user_db=None, object=None, object2=None, check_jwt=True, autorename = False):
     def wrapper(fn):
         @wraps(fn)
         def decorator(*args, **kwargs):
@@ -40,7 +40,35 @@ def decorator(user=False, user_db=None, object=None, check_jwt=True):
                 if terme == None:
                     raise Exception(404, "Cannot found ressource.")
                 
-                final_kwargs["object"] = terme
+                if not autorename:
+                    final_kwargs["object"] = terme
+                else:
+                    final_kwargs[object.__name__.lower()] = terme
+                
+                if request.method == "GET":
+                    terme.get_allowed(user_data['id'])
+                elif request.method == "POST":
+                    terme.post_allowed(user_data['id'])
+                elif request.method == "PUT":
+                    terme.put_allowed(user_data['id'])
+                elif request.method == "DELETE":
+                    terme.delete_allowed(user_data['id'])
+                else:
+                    raise Exception(405, "not allowed")
+                
+            if ("id2" in kwargs and object2):
+                try:
+                    terme = object2.query.get(int(kwargs["id2"]))
+                except:
+                    terme = object2.query.filter_by(secret=kwargs["id2"]).first()
+                    
+                if terme == None:
+                    raise Exception(404, "Cannot found ressource.")
+                
+                if not autorename:
+                    final_kwargs["object2"] = terme
+                else:
+                    final_kwargs[object2.__name__.lower()] = terme
                 
                 if request.method == "GET":
                     terme.get_allowed(user_data['id'])

@@ -161,7 +161,5 @@ section {
   text-decoration: none;
 }
 
-.navbar li a:hover {
-  /* background-color: #111111; */
-}
+
 </style>

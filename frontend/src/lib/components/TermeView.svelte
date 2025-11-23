@@ -6,7 +6,7 @@
     import { popup, toggle_view_mode, user, view_mode } from "$lib/services/global";
     import { onMount } from "svelte";
     import TermeAddDictPopup from "$lib/popups/TermeAddDictPopup.svelte";
-    import Terme from "$lib/classes/terme.ts";
+    import Terme from "$lib/classes/terme";
     import { edit_view_event_manage } from "./TermeViewInputManager.js";
     
     let { terme_object } = $props<{}>();
@@ -31,143 +31,24 @@
 
     $effect(()=>console.log(reactive))
 
-    document.addEventListener('keydown', (event) => edit_view_event_manage(event, terme))
 
-
-    // document.addEventListener('keydown', function(event) {
-    //     var input: HTMLInputElement = document.activeElement
-    //     var input_type = input.tagName.toLowerCase();
-
-    //     var check = [
-    //         {
-    //             conditions: [!!event.metaKey && event.key == "e"],
-    //             func : terme.toggle_button
-    //         },
-    //         {
-    //             conditions: [!!event.metaKey && event.key == "d"],
-    //             func : () => show_add_dict = !show_add_dict
-    //         },
-    //         {
-    //             conditions: [!!event.metaKey && event.key == "d"],
-    //             func : () => show_add_dict = !show_add_dict
-    //         },
-
-
-    //     ]
-
-    //     if (!['input', "textarea"].includes(input_type))
-    //     {
-    //         terme.inputs[0].focus();
-    //         return;
-    //     }
-
-     
-        
-
-    //     if (event.key == "Tab") {   //tab pressed
-    //         event.preventDefault(); // stops its action
-    //         event.stopPropagation();
-    //     }
-
-
-    //     var current_input = terme.inputs.indexOf(input);
-
-    //     if (!!event.shiftKey && event.key == "Enter")
-    //     {
-    //         event.preventDefault(); // stops its action
-    //         event.stopPropagation();
-    //         var ind: any = terme.get_paragraphe_x(input);
-    //         if (ind != -1)
-    //         {
-    //             terme.change_paragraph_amount(ind, 1);
-    //             return;
-    //         }
-    //         var ind: any = terme.get_content_x(input)
-    //         console.log(ind)
-    //         if (ind != -1)
-    //         {
-    //             terme.change_paragraph_amount(ind, 1);
-    //             return;
-    //         }
-    //     }
-
-
-    //     if (!!event.shiftKey && event.key == "Backspace")
-    //     {
-    //         event.preventDefault(); // stops its action
-    //         event.stopPropagation();
-    //         var ind: any = terme.get_paragraphe_x(input);
-    //         if (ind != -1)
-    //         {
-    //             terme.change_paragraph_amount(ind, -1);
-    //             return;
-    //         }
-    //     }
-
-
-    //     if (event.key == "Backspace")
-    //     {
-    //         var ind: any = terme.get_paragraphe_x(input);
-    //         if (ind != -1)
-    //         {
-    //             if (terme.inputs_value[current_input].name_value === "" && terme.inputs_value[current_input].content_value === "")
-    //             {
-    //                 event.preventDefault(); // stops its action
-    //                 event.stopPropagation();
-    //                 terme.change_paragraph_amount(ind, -1);
-    //                 return;
-    //             }
-    //         }
-            
-    //     }
-
-    //     if (((event.key == "ArrowDown" || (event.key == "Enter")) && input_type != "textarea") || event.key == "Tab")
-    //     {
-    //         event.preventDefault(); // stops its action
-    //         event.stopPropagation();
-    //         terme.focus(current_input, 1)
-    //     }
-    //     if ((event.key == "ArrowUp" && input_type != "textarea") || (event.key == "Backspace" && input.value == "" ) )
-    //     {           
-    //         event.preventDefault(); // stops its action
-    //         event.stopPropagation();    
-    //         terme.focus(current_input, -1)
-    //     }
-
-
-    //     if (input_type == "textarea" && event.key == "ArrowDown")
-    //     {
-    //         if (input.selectionStart > input.value.lastIndexOf("\n"))
-    //         {
-    //             event.preventDefault(); // stops its action
-    //             event.stopPropagation();  
-    //             terme.focus(current_input, 1)
-    //         }
-    //     }
-    //     var index = input.value.indexOf("\n")
-    //     if (input_type == "textarea" && event.key == "ArrowUp")
-    //     {
-    //         if (input.selectionStart <=  index || index == -1)
-    //         {
-    //             event.preventDefault(); 
-    //             event.stopPropagation();  
-    //             terme.focus(current_input, -1)
-    //         }
-    //     }
-    // });
-
+    document.addEventListener('keydown', (event) => edit_view_event_manage(event, terme, {
+        "show_dict_popup": ()=> show_add_dict = !show_add_dict
+    } ))
 
 </script>
 
 <TermeAddDictPopup bind:terme bind:visibility={show_add_dict} ></TermeAddDictPopup>
 
 {#if $view_mode == "edit"}
-<div class="toolbar">
-
-</div>
+    <div class="toolbar">
+        <span>
+            {$error}
+        </span>
+    </div>
 {/if}
 
-<main>
+<main class="{$view_mode == "edit" ? "main_edit" : ""}">
     <div class="content">
 {#if $view_mode == "edit"}
     <div class="name_div">
@@ -227,16 +108,39 @@
         align-items: center;
     }
 
-    main {
-        width: 100%;
-        height: inherit;
-        background-color: rgba(250, 248, 243, 1);
-        background-image: 
-            linear-gradient(#cdcdcd 2px, transparent 2px),
-            linear-gradient(#e4e3e1 1px, transparent 1px),
-            linear-gradient(90deg, #e1c9c9 2px, transparent 2px);
-        background-size: 200px 200px, 40px  40px, 5000px,  5000px;
-        background-position: -2px -120px, -1px 2px, -4930px, -2px;
+
+    .toolbar {
+        height: 10%;
+    }
+   main {
+    width: 100%;
+    min-height: 100%;
+    background-color: rgba(250, 248, 243, 1);
+
+    background-image:
+        linear-gradient(#cdcdcd 2px, transparent 2px),
+        linear-gradient(#e4e3e1 1px, transparent 1px),
+        linear-gradient(90deg, #e1c9c9 2px, transparent 2px);
+
+    background-size:
+        200px 200px,
+        40px 40px,
+        200px 10000px;
+
+    background-position:
+        0 82px,
+        0 2px,
+        70px 0;
+    background-repeat:
+        repeat,      /* grille large */
+        repeat,      /* grille fine  */
+        no-repeat;   /* la ligne vertical UNIQUE */
+
+}
+
+    .main_edit {
+        border-top: #cdcdcd solid 2px;
+        min-height: 89%;
     }
 
     #name, #name:focus {

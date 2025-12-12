@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { signin, signup } from "$lib/login";
+    import { signin, signup } from "$lib/services/login";
 
 
 

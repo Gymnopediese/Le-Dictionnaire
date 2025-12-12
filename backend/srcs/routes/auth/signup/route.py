@@ -15,7 +15,7 @@ def sign_up(arguments):
     username = arguments.get("username")
     password = sha256(arguments.get("password").encode()).hexdigest()
 
-    if (User.exists(username=username)):
+    if User.exists(username=username):
         raise Exception(400, "username already taken")
 
     user = User(

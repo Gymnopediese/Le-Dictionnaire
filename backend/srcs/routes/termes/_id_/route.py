@@ -5,25 +5,25 @@ from imports.models import *
 class TermeAPI(MethodView):
     @termes.doc(description="Get a terme by ID")
     @termes.response(200, schema=TermeResponse)
-    @decorator(object=Terme)
-    def get(self, object):
-        return jsonify(object.serialize(TermeResponse))
+    @decorator(object=Terme, user=True, autorename=True)
+    def get(self, terme, user):
+        return jsonify(terme.serialize(TermeResponse, user["id"]))
     
     @termes.doc(description="Update a temre by ID or Secret")
     @termes.arguments(TermeCreate)
-    @termes.response(200, schema=UserResponse)
+    @termes.response(200)
     @decorator(object=Terme, user=True)
     def put(self, args, object, user):
-        print(args)
         args["content"] = Terme.join_paragraphs(args["paragraphs"])
         object.put_allowed(user["id"])
+        object.metadatas_allowed(args["metadatas"], user["id"])
         object.put(args)
         Version.new(object)
         return jsonify({})
     
     @termes.doc(description="Delete a user by ID")
     @termes.response(204)
-    @jwt_required()
+    @decorator()
     def delete(self, id):
         try:
             Terme.query.get(int(id))

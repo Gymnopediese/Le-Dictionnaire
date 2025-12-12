@@ -4,9 +4,9 @@ from imports.forapi import *
 class DictionnaireApi(MethodView):
     
     @dictionnaires.doc(description="Get a particular dictionnary")
-    @dictionnaires.response(200, schema=DictionnaireFinalResponse)
-    @decorator(object=Dictionnaire)
-    def get(self, object):
+    @dictionnaires.response(200, schema=DictionnaireResponse)
+    @decorator(object=Dictionnaire, user=True, autorename=True, get_allow_result="rights")
+    def get(self, dictionnaire, user, rights):
         """
         Get all content need for a particular dictionnary.
         ---
@@ -14,6 +14,8 @@ class DictionnaireApi(MethodView):
             200:
                 description: User
         """
-        print("je vais rendre ca gros, " ,object.serialize(DictionnaireResponse))
-        return object.serialize(DictionnaireResponse)
+        res = dictionnaire.serialize(DictionnaireResponse)
+        res["rights"] = rights
+        print("right ?", rights)
+        return res
     

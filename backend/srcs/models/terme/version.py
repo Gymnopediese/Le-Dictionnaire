@@ -5,8 +5,8 @@ class Version(Model):
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String())
-    genre = db.Column(db.String())
-    type = db.Column(db.String())
+
+    metadatas = db.Column(JSONB)
 
     content = db.Column(db.Text, nullable=False)
     version = db.Column(db.Integer, nullable=False)
@@ -34,8 +34,7 @@ class Version(Model):
 
         new_version = Version(
             name=terme.name,
-            genre=terme.genre,
-            type=terme.type,
+            metadatas=terme.metadatas,
             content=content_to_store,
             version=version,
             terme_id=terme.id

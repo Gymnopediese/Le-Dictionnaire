@@ -4,7 +4,7 @@ from imports.forapi import *
 class TermesAPI(MethodView):
     @termes.doc(description="Get all termes")
     @termes.response(200)
-    @jwt_required()
+    @decorator()
     def get(self):
         termes = Terme.query.all()
         if termes:
@@ -24,12 +24,11 @@ class TermesAPI(MethodView):
         #     dictionnaire_link = DictionnaireTerme(dictionnaire_id=id, terme_id=terme.id)
         #     db.session.add(dictionnaire_link)
         # db.session.commit()
-        
+        Terme.metadatas_allowed(args["metadatas"], user["id"])
         terme = Terme(
             name=args["name"],
-            genre=args["genre"],
-            type=args["type"],
             content=Terme.join_paragraphs(args["paragraphs"]),
+            metadatas=args["metadatas"],
         )
         db.session.add(terme)
         db.session.commit()

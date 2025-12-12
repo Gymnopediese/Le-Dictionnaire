@@ -25,7 +25,10 @@
 	},
 	"dependencies": {
 		"@cartamd/plugin-slash": "^4.2.0",
+		"@tiptap/core": "^3.11.0",
+		"@tiptap/starter-kit": "^3.11.0",
 		"98.css": "^0.1.21",
-		"carta-md": "^4.11.1"
+		"carta-md": "^4.11.1",
+		"tinymce": "^8.2.2"
 	}
 }

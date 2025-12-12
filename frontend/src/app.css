@@ -7,6 +7,48 @@ html {
 }
 
 body {
-        background-color: rgba(250, 248, 243, 0.8);
+    color: rgb(163, 149, 133);
+    background-color: rgba(250, 248, 243, 0.8);
     font-family: "Source Serif Pro", serif;
+}
+
+button {
+    all: unset;
+    cursor: pointer;
+
+    padding: 5px;
+    margin: 5px;
+
+    font-size: 16px;
+    font-family: "Source Serif Pro", serif;
+    color: #5c544b;
+
+    background-color: #e8dfd3;
+    border: 2px solid #b8a898;
+    border-radius: 4px;
+
+    box-shadow:
+        3px 3px 0px #b8a898,
+        inset 0 0 0 2px rgba(255,255,255,0.4);
+
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow:
+        1px 1px 0px #b8a898,
+        inset 0 0 0 2px rgba(255,255,255,0.4);
+}
+
+.carreaux {
+            border: #cdcdcd solid 2px;
+        background-color: #FAF8F3;
+        background-image: 
+            linear-gradient(#e4e4e4 2px, transparent 2px),
+            linear-gradient(90deg, #e4e4e4 2px, transparent 2px),
+            linear-gradient(#e4e4e4 1px, transparent 1px),
+            linear-gradient(90deg, #e4e4e4 1px, #faf8f3 1px);
+        background-size: 100px 100px, 100px 100px, 20px  20px, 20px 20px;
+        background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px; 
 }

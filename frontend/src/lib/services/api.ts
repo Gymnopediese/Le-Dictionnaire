@@ -18,7 +18,8 @@ function preprotection()
 
 async function protection(result: Response, token_needed: boolean = true) {
 
-    if (result.status == 401 && token_needed)
+    var res = (await result.json())
+    if (res == "Unotorized token boy.")
     {
         remove_cookie("token")
         goto("/")
@@ -26,9 +27,9 @@ async function protection(result: Response, token_needed: boolean = true) {
     }
     if (result.status >= 400)
     {
-        throw await result.json();
+        throw await res
     }
-    return await result.json();
+    return await res
 
 }
 

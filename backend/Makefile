@@ -1,9 +1,15 @@
 restart:
-	sudo docker restart backend_dictionnaire
+	docker restart backend_dictionnaire
 
 interact:
-	sudo docker exec -it backend_dictionnaire bash
+	docker exec -it backend_dictionnaire bash
 
 log:
 	docker logs -f --tail 100 backend_dictionnaire
 	
+rlog: restart
+	docker logs -f --tail 100 backend_dictionnaire
+	
+migrate:
+	flask --app srcs/main.py db migrate
+	flask  --app srcs/main.py db upgrade

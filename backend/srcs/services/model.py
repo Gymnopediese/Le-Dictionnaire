@@ -17,31 +17,35 @@ class Model(db.Model):
     utime = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now(), default=db.func.now())
 
     @classmethod
-    def update_all_secrets(cls):
-        total = 0
+    def update_all(cls):
         for subclass in cls.__subclasses__():
             subclass.update()
-        print(f"{total} secrets mis à jour dans toutes les tables.")
 
     @classmethod
     def update(cls):
-        print(cls)
-        authors = cls.query.filter_by(secret=None).all()
-
-        for author in authors:
-            author.secret = generate_id()
-        db.session.commit()
+        pass
 
     def put(self, args):
         for key, value in args.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+                print(key, value)
         db.session.commit()
 
     @classmethod
     def exists(cls, **kwargs):
         return bool(cls.query.filter_by(**kwargs).first())
-
+    
+    
+    @classmethod
+    def get(cls, **kwargs):
+        return cls.query.filter_by(**kwargs).first()
+    
+    
+    @classmethod
+    def get_all(cls, **kwargs):
+        return cls.query.filter_by(**kwargs).all()
+    
     def choose(self, i, depth):
         if "models" in str(type(i[1])) and depth > 0:
             return i[1].serialize(depth - 1)
@@ -75,7 +79,6 @@ class Model(db.Model):
             if not hasattr(self, name):
                 continue
             attr = getattr(self, name)
-            print(type(attr))
             
             if type(attr) == sqlalchemy.orm.collections.InstrumentedList:
                 list = attr
@@ -88,13 +91,8 @@ class Model(db.Model):
                 nested_schema = responses.__dict__[schema._declared_fields[name].nested]
                 attr = attr.serialize(nested_schema)
             res[name] = attr
-            print("attr", name, attr)
         
         if "_final" in schema.__dict__.keys():
-            print(schema._declared_fields.keys())
-            print(hasattr(self, "dictionnaire"))
-            print(res)
-            print(type(self))
             rt = res
             res = res[schema.__dict__["_final"]]
             for key, pair in rt.items():
@@ -102,3 +100,15 @@ class Model(db.Model):
                     res[key] = pair
         return res
 
+    @classmethod
+    def new(cls, **kwargs):
+        object = cls(**kwargs)
+        db.session.add(object)
+        db.session.commit()
+        return object
+    
+    @classmethod
+    def get_or_create(cls, **kwargs):
+        object = cls.get(**kwargs)
+        return object if object else cls.new(**kwargs)
+    

@@ -1,5 +1,6 @@
+import { goto } from "$app/navigation";
 import { del, post, put } from "$lib/services/api";
-import { get_writable, toggle_view_mode, view_mode } from "$lib/services/global";
+import { focus_input_function, get_writable, metadatas, toggle_view_mode, view_mode } from "$lib/services/global";
 import { json } from "@sveltejs/kit";
 import { writable, type Writable } from "svelte/store";
 
@@ -37,7 +38,6 @@ export class Paragraph
         var count = (content.value.match(/\n/g)|| []).length + 1
         content.style.height = count * 40 + 'px';
         content.style.height = content.scrollHeight + 'px';
-        // console.log(content.scrollHeight)
     }
 }
 
@@ -82,7 +82,7 @@ export default class Terme
 
     init(terme)
     {
-        if (terme == undefined)
+        if (terme == undefined || terme.name == undefined)
         {
             this.paragraphs.push(new Paragraph())
             this.set_inputs();
@@ -90,7 +90,6 @@ export default class Terme
             return
         }
         this.terme = terme;
-        console.log(terme)
         this.id = terme.id ?? -1;
         this.draft_id = terme.draft_id ?? "";
         this.name_value = terme.name;
@@ -114,36 +113,71 @@ export default class Terme
                 throw (`Cannot save empty fieds, ${input}`)
             }
         }
-        console.log("saving")
         return { terme : {
             name: this.name.value,
-            // genre: this.genre.value,
-            type: this.type.value,
-            context: this.context.value,
-            language: this.langue.value,
             paragraphs: this.paragraphs.map(element => {
                 return {
                     "name": element.name_value,
                     "contents": [element.content_value]
                 }
-            })
+            }),
+            metadatas: Object.fromEntries(
+                        Object.entries(get_writable(metadatas))
+                        .filter(([_, metadata]: any) => metadata.used === true)
+                        .map(([key, metadata]: any) => {
+                            if (metadata.type === "string") return [key, {
+                                    type: metadata.type,
+                                    data: metadata.data,
+                            }];
+                            if (metadata.type === "terme")
+                            {
+                                return [key, {
+                                    type: metadata.type,
+                                    data: metadata.data.id,
+                                }];
+                            }
+                            if (metadata.type === "list"){
+                                var list = []
+                                for (let meta of metadata.data)
+                                {
+                                    if (meta.type === "string") list.push({
+                                        type: metadata.type,
+                                        data: metadata.data,
+                                    });
+                                    if (meta.type === "terme")
+                                        list.push({
+                                            type: meta.type,
+                                            data: meta.data.id,
+                                        });
+                                }
+                                var m = structuredClone(metadata)
+                                m.data = list
+                                return [key, {
+                                    type: "list",
+                                    data: list,
+                                }]
+                            }
+                            return [key, metadata]
+                        })
+                )
         }
     }
     }
     async post()
     {
         try {
-
             var payload = this.payload()
             var terme = await post("/termes/", payload["terme"]);
             this.id = terme.id;
+            goto(`/termes/${this.id}`)
             // await put(`/termes/${this.id}/dictionnaires`, payload["dictionnaires"]);
         
         }
         catch (e){
-            this.error.update(()=>e);
+            this.error.set(e);
             return false;
         }
+        this.del_draft()
         return true
     }
 
@@ -153,6 +187,7 @@ export default class Terme
             this.draft_id = "draft_" + String(Math.round(Math.random() * 100000000000))
         var payload = this.payload()
         localStorage.setItem(this.draft_id, JSON.stringify(payload.terme))
+        return true
     }
 
     load_draft()
@@ -173,16 +208,15 @@ export default class Terme
     {
         if (this.id == -1)
             return this.draft()
-        this.del_draft()
-        try {
+        // try {
             var payload = this.payload()
+            console.log(payload)
             await put(`/termes/${this.id}`, payload["terme"]);
             // await put(`/termes/${this.id}/dictionnaires`, payload["dictionnaires"]);
-        } catch (e: any){
-            this.error.update(()=>e);
-            console.log(e)
-            return false
-        }
+        // } catch (e: any){
+        //     this.error.set(e);
+        //     return false
+        // }
         return true;
     }
     
@@ -195,17 +229,19 @@ export default class Terme
     {
         this.inputs = [
             this.name,
-            this.type,
-            this.context,
-            this.langue,
         ]
+
 
         this.inputs_value = [
             this.name_value,
-            this.type_value,
-            this.context_value,
-            this.langue_value,
         ]
+
+        for (let m of Object.values(get_writable(metadatas)))
+        {
+            console.log(m)
+            if (m.ref != undefined || m.ref != null)
+                this.inputs.push(m.ref)
+        }
 
         var i = 0
         for (let x of Array(this.paragraphs.length).keys())
@@ -220,7 +256,6 @@ export default class Terme
             this.inputs_value.push(this.paragraphs[x]);
             i +=1 
         }
-        console.log(this.inputs)
     }
 
     focus(index, shift)
@@ -229,7 +264,10 @@ export default class Terme
             index += this.inputs.length
         if (index + shift >= this.inputs.length)
             index -= this.inputs.length
+        this.set_inputs()
+        console.log(this.inputs)
         this.inputs[index + shift].focus()
+        get_writable(focus_input_function)()
     }
 
     focus_at(x, y)
@@ -275,7 +313,6 @@ export default class Terme
             this.paragraphs.splice(x + 1, 0, new Paragraph())
             this.set_inputs();
             this.reactive.update((v)=>!v)
-            console.log("new paragraphe !")
             return;
         }
 
@@ -286,7 +323,6 @@ export default class Terme
         this.paragraphs.splice(x, 1);
         this.set_inputs();
         this.reactive.update((v)=>!v)
-        console.log("new paragraphe !")
     }
 
     refresh_paragraphs()

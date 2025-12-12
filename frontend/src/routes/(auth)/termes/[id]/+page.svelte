@@ -14,10 +14,13 @@
 
 
     <!-- <link rel="stylesheet" href="https://unpkg.com/98.css@0.1.4/build/98.css" /> -->
-
+{#key data.id}
+    
 {#await try_get_terme()}
     loading data
 {:then terme} 
     <TermeView terme_object={terme} ></TermeView>
 
 {/await}
+
+{/key}

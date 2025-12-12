@@ -1,15 +1,15 @@
 from imports.extern import *
 
-class MeDictionnaireResponse(Schema):
-    id = fields.Integer()
-    name = fields.String()
-    description = fields.String()
+# class MeDictionnaireResponse(Schema):
+#     id = fields.Integer()
+#     name = fields.String()
+#     description = fields.String()
     
     
-class MeOwnershipResponse(Schema):
-    _final = "dictionnaire"
-    dictionnaire = fields.Nested("MeDictionnaireResponse")
-    rights = fields.String()
+# class MeOwnershipResponse(Schema):
+#     _final = "dictionnaire"
+#     dictionnaire = fields.Nested("MeDictionnaireResponse")
+#     rights = fields.String()
 
 class MeTermeResponse(Schema):
     id = fields.Integer()
@@ -21,8 +21,9 @@ class MeAuthorResponse(Schema):
     terme  = fields.Nested("MeDictionnaireResponse")
 
 class MeResponse(Schema):
+    id = fields.Integer()
     username = fields.String()
-    dictionnaires = fields.List(fields.Nested("MeOwnershipResponse"))
-    termes = fields.List(fields.Nested("MeAuthorResponse"))
+    # dictionnaires = fields.List(fields.Nested("MeOwnershipResponse"))
+    # termes = fields.List(fields.Nested("MeAuthorResponse"))
     
     # contents = fields.List(fields.Str(required=True))

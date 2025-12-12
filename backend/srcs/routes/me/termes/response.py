@@ -4,6 +4,9 @@ class MeGetTermesTermeResponse(Schema):
     id = fields.Integer()
     name = fields.String()
     description = fields.String()
+    type = fields.String()
+    context = fields.String()
+    language = fields.String()
     
     
 class MeGetTermesAuthorResponse(Schema):

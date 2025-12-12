@@ -14,6 +14,10 @@ class TermeDictionnaireResponse(Schema):
     _final = "dictionnaire"
     dictionnaire = fields.Nested("TermeDictionnaireTrueResponse")
 
+
+class MetadataRepsponse():
+    pass
+
 class TermeResponse(Schema):
     id = fields.Int()
     name = fields.Str(required=True)
@@ -23,3 +27,5 @@ class TermeResponse(Schema):
     context = fields.Enum(TermeContext)
     paragraphs = fields.List(fields.Nested("TermeParagraphResponse"),required=True)
     dictionnaires = fields.List(fields.Nested("TermeDictionnaireResponse"),required=True)
+    metadatas = fields.Raw()
+    metadata_types = fields.Raw()

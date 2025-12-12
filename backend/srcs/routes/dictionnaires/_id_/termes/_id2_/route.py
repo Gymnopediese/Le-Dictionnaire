@@ -15,7 +15,6 @@ class DictionnaireTermesApi(MethodView):
                 description: User
         """
         new_terme = DictionnaireTerme.query.filter_by(dictionnaire_id=dictionnaire.id, terme_id= terme.id).first()
-        print("boty ", dictionnaire.name, terme.name, new_terme)
         if new_terme:
             return jsonify({})
         new_terme = DictionnaireTerme(dictionnaire_id=dictionnaire.id, terme_id= terme.id)

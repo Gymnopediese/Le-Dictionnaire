@@ -1,20 +1,22 @@
 
 <script lang="ts">
-    import { del, post, put } from "$lib/services/api.js";
+    import { del, get, post, put } from "$lib/services/api.js";
     import InputChoice from "$lib/components/InputChoice.svelte";
     import { contenu_types, contexts, genres, langues, types } from "$lib/services/enums.js";
-    import { popup, toggle_view_mode, user, view_mode } from "$lib/services/global";
+    import { focus_input_function, metadatas, popup, toggle_view_mode, user, view_mode } from "$lib/services/global";
     import { onMount } from "svelte";
     import TermeAddDictPopup from "$lib/popups/TermeAddDictPopup.svelte";
     import Terme from "$lib/classes/terme";
     import { edit_view_event_manage } from "./TermeViewInputManager.js";
+    import Metadata from "./Metadata.svelte";
     
     let { terme_object } = $props<{}>();
     var show_add_dict = $state(false)
     var terme = $state(new Terme(terme_object));
     let { reactive, error } = terme;
 
-
+    $metadatas = terme_object.metadatas
+    
     $effect(()=>
     {
         $reactive = $reactive;
@@ -23,10 +25,12 @@
         terme.refresh_paragraphs();
     })
 
-    onMount(()=> {
+    onMount(async ()=> {
         terme.refresh_paragraphs()
         terme.set_inputs();
     })
+
+    
 
 
     $effect(()=>console.log(reactive))
@@ -45,46 +49,52 @@
         <span>
             {$error}
         </span>
+        {#if terme.id == -1}
+            <button on:click={() => terme.post()}>
+                upload
+            </button>
+        {/if}
     </div>
 {/if}
 
 <main class="{$view_mode == "edit" ? "main_edit" : ""}">
     <div class="content">
-{#if $view_mode == "edit"}
-    <div class="name_div">
-        <input bind:value={terme.name_value} bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="Nom..."><br>
-    </div>
-{:else}
-    <div class="name_div">
-        <label bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="name">{terme.name_value}</label><br>
-    </div>
-{/if}
-
-<div class="metadata_div">
-    <InputChoice class_name="metadata_input" bind:value={terme.type_value} bind:input={terme.type} label={"Type\t\t: "}    align="right" width="93%" placeholder="type..." options={Object.keys(types)} ></InputChoice>
-    <InputChoice class_name="metadata_input" bind:value={terme.context_value} bind:input={terme.context} label={"Context\t: "} align="right" width="93%" placeholder="context..." options={Object.keys(contexts)} ></InputChoice>
-    <InputChoice class_name="metadata_input" bind:value={terme.langue_value} bind:input={terme.langue} label={"Langue\t: "}  align="right" width="93%" placeholder="langue..." options={Object.keys(langues)} ></InputChoice>
-</div>
-
-{#key $reactive}
-    {#each Array(terme.paragraphs.length) as _, x}
-            {#if x != 0}
-                <div class="paragraph_name_div" >
-                    <div style="width:95%;">
-                    <InputChoice class_name="paragraph_name_input"  placeholder="Paragraphe name..." options={contenu_types} bind:input={terme.paragraphs[x].name} bind:value={terme.paragraphs[x].name_value} > </InputChoice>
-                    </div>
-                    <button on:click={() => terme.change_paragraph_amount(x, -1)} style="margin:1%;">X</button>
-                </div>
-            {/if}
-            <div class="content_div">
-            {#key terme.paragraphs[x].content}
-                <textarea class="content_input" bind:value={terme.paragraphs[x].content_value} bind:this={terme.paragraphs[x].content} name="contenu" id="1" placeholder="contenu" ></textarea>
-            {/key}
+        {#if $view_mode == "edit"}
+            <div class="name_div">
+                <input on:focus={$focus_input_function} on:keydown={$focus_input_function} bind:value={terme.name_value} bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="Nom..."><br>
             </div>
-    {/each}
-{/key}
+        {:else}
+            <div class="name_div">
+                <label bind:this={terme.name} autoComplete="off"  id="name" type="text" list="browsers" placeholder="name">{terme.name_value}</label><br>
+            </div>
+        {/if}
 
-</div>
+    <div class="metadata_div">
+        <Metadata></Metadata>
+        <!-- <InputChoice class_name="metadata_input" bind:value={terme.type_value} bind:input={terme.type} label={"Type\t\t: "}    align="right" width="93%" placeholder="type..." options={Object.keys(types)} ></InputChoice>
+        <InputChoice class_name="metadata_input" bind:value={terme.context_value} bind:input={terme.context} label={"Context\t: "} align="right" width="93%" placeholder="context..." options={Object.keys(contexts)} ></InputChoice>
+        <InputChoice class_name="metadata_input" bind:value={terme.langue_value} bind:input={terme.langue} label={"Langue\t: "}  align="right" width="93%" placeholder="langue..." options={Object.keys(langues)} ></InputChoice> -->
+    </div>
+
+    {#key $reactive}
+        {#each Array(terme.paragraphs.length) as _, x}
+                {#if x != 0}
+                    <div class="paragraph_name_div" >
+                        <div style="width:95%;">
+                        <InputChoice class_name="paragraph_name_input"  placeholder="Paragraphe name..." options={contenu_types} bind:input={terme.paragraphs[x].name} bind:value={terme.paragraphs[x].name_value} > </InputChoice>
+                        </div>
+                        <!-- <button on:click={() => terme.change_paragraph_amount(x, -1)} style="margin:1%;">X</button> -->
+                    </div>
+                {/if}
+                <div class="content_div">
+                {#key terme.paragraphs[x].content}
+                    <textarea on:focus={$focus_input_function} on:keydown={$focus_input_function} spellcheck="true" class="content_input" bind:value={terme.paragraphs[x].content_value} bind:this={terme.paragraphs[x].content} name="contenu" id="1" placeholder="contenu" ></textarea>
+                {/key}
+                </div>
+        {/each}
+    {/key}
+
+    </div>
 
 </main>
 <style>
@@ -99,13 +109,13 @@
 
     .metadata_div {
         margin-top: 30px;
-        margin-bottom:38px;
+        margin-bottom:30px;
         margin-left: 75px;
-        width: auto;
+        width: calc(100% - 75px);
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        /* justify-content: center; */
+        /* align-items: center; */
     }
 
 
@@ -113,8 +123,19 @@
         height: 10%;
     }
    main {
-    width: 100%;
-    min-height: 100%;
+    width: 98.5%;
+    min-height: 97.5%;
+    margin: 0.5%;
+
+    /* width: 95%; */
+    border: 2px solid #b8a898;
+    border-radius: 8px;
+    /* box-shadow: 12px 12px 24px rgba(185, 185, 185, 0.15), 0 0 0 4px #f4efe7 inset; */
+    display: flex;
+    flex-direction: column;
+    /* gap: 24px; */
+    transition: transform 0.2s ease;
+    
     background-color: rgba(250, 248, 243, 1);
 
     background-image:
@@ -128,8 +149,8 @@
         200px 10000px;
 
     background-position:
-        0 82px,
-        0 2px,
+        0 80px,
+        0 0px,
         70px 0;
     background-repeat:
         repeat,      /* grille large */
@@ -139,8 +160,7 @@
 }
 
     .main_edit {
-        border-top: #cdcdcd solid 2px;
-        min-height: 89%;
+        min-height: 87%;
     }
 
     #name, #name:focus {
@@ -156,9 +176,6 @@
         /* font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif */
     }
 
-    .content {
-        /* margin-left: 73px; */
-    }
 
     .content_div
     {

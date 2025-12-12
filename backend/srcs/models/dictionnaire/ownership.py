@@ -1,4 +1,5 @@
 from imports.services import *
+from imports.enums import *
 
 class Ownership(Model):
 
@@ -17,8 +18,25 @@ class Ownership(Model):
             return res
         return super().serialize(depth)
 
-class OwnerShipRights(enum.Enum):
-    all = "all"
+    @staticmethod
+    def get_rights(user_id, dictionnaire_id, number=False):
+        owner = Ownership.query.filter_by(user_id=user_id, dictionnaire_id=dictionnaire_id).first()
+        rights = "view" if not owner else owner.rights
+        if number:
+            return rights_level[rights]
+        return rights
     
-    read_only = "read_only"
-    none = "none"
+    
+    @staticmethod
+    def set_rights(user_id, dictionnaire_id, rights):
+        owner = Ownership.query.filter_by(user_id=user_id, dictionnaire_id=dictionnaire_id).first()
+        if not owner:
+            if rights == "view":
+                return
+            owner = Ownership(user_id=user_id, dictionnaire_id=dictionnaire_id, rights=rights)
+            db.session.add(owner)
+        elif rights == "view":
+            db.session.delete(owner)
+        else:
+            owner.rights = rights
+        db.session.commit()

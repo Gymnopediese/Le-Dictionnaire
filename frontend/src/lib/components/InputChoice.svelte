@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { view_mode } from "$lib/services/global";
+    import { view_mode, focus_input_function } from "$lib/services/global";
 
 
     export var label        : string = "";
@@ -10,16 +10,13 @@
     export let value        : string = "";
     var id                  : string = String(Math.random() * 100000)
 
-    console.log(options)
 </script>
 <div >
-<!-- {#if label}
-    <label for="">{label}</label>
-{/if} -->
+
 
 {#if $view_mode == "edit"}
 <!-- style="float: {align}; width:{width};font-size:{font_size}; height:{height};" -->
-<input bind:value class="{class_name}" bind:this={input}  placeholder="{placeholder}" list="{id}" type="text"> <br>
+<input on:focus={$focus_input_function} on:keydown={$focus_input_function} bind:value class="{class_name}" bind:this={input}  placeholder="{placeholder}" list="{id}" type="text"> <br>
 <datalist id="{id}">
     {#each options as option}
         <option value="{option}"> </option>

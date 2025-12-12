@@ -1,11 +1,7 @@
 
 <script lang="ts">
-    import Dictionnaires from "$lib/components/Dictionnaires/Dictionnaires.svelte";
-import { del, get, put } from "$lib/services/api";
-    import { user } from "$lib/services/global";
+
     import { fade } from "svelte/transition";
-    import Page from "../../routes/(auth)/profile/me/termes/+page.svelte";
-    import { get_dictionnaire } from "$lib/services/cache";
 
 
 
@@ -23,26 +19,6 @@ import { del, get, put } from "$lib/services/api";
         }
     }
 
-    var dictionnaires = $user.dictionnaires
-
-    console.log(dictionnaires)
-    dictionnaires = [({
-        name: "all",
-        id: "me",
-    }), ...dictionnaires]
-    var termes = $user.termes;
-    get_dict
-
-    // export let dictionnaires = [];        // [{ name, words: [{ word, type, description }] }]
-    // export let onAdd = (w) => {};
-
-    let selected = $state(null);
-    selected = dictionnaires[0]
-
-    async function get_dict() {
-        return await get_dictionnaire(selected.id);  
-    }
-
 
 </script>
 
@@ -50,53 +26,11 @@ import { del, get, put } from "$lib/services/api";
         
     <div in:fade={{duration: 500}} class="popup {visibility ? "show" : "hide"}">
 
-
-        
-
-<div class="chooser">
-    <div class="sidebar">
-        {#each dictionnaires as d}
-            <div
-                class="dict_item {selected === d ? 'active' : ''}"
-                on:click={() => (selected = d)}
-            >
-                {d.name}
-            </div>
-        {/each}
-    </div>
-
-    <div class="content">
-        {#if selected}
-            
-            {#await get_dict()}
-                loading termes...
-            {:then dictionnaires} 
-                {#key dictionnaire.termes}
-                    
-                {#each dictionnaires.termes as t}
-                {#if !dictionnaire.termes.find((terme)=>terme.id == t.id)}
-                    <div class="word_card">
-                        <div class="word">{t.name}</div>
-                        <div class="type">{t.type}</div>
-                        <div class="desc">{t.description}</div>
-
-                        <button class="add_btn" on:click={() => onAdd(t)}>
-                            add
-                        </button>
-                    </div>
-                {/if}
-                {/each}
-                {/key}
-
-            {/await}
-        {/if}
-    </div>
-</div>
-
-
+        <slot></slot>
 
     </div>
     {/if}
+    
 
 <style>
 

@@ -2,7 +2,9 @@
     import { goto } from "$app/navigation";
     import DictAddTermePopup from "$lib/popups/DictAddTermePopup.svelte";
     import { del, get, put } from "$lib/services/api.js";
+    import { follow_dictionnaire, get_dictionnaire, unfollow_dictionnaire, unwrite_dictionnaire } from "$lib/services/cache";
     import { langues, types } from "$lib/services/enums.js";
+    import TermeFilter from "../TermeFilter.svelte";
 
     export let data = {};
     export let popup = false;
@@ -10,8 +12,12 @@
 
     async function try_get_terme() {
         if (dictionnaire != null) return dictionnaire;
-        dictionnaire = await get("/dictionnaires/" + data.id);
-        return dictionnaire;
+        dictionnaire = await  get_dictionnaire(data.id);
+        console.log(dictionnaire)
+        return dictionnaire
+        // dictionnaire = await get("/dictionnaires/" + data.id);
+        // dictionnaire.termes = await get("/dictionnaires/" + data.id + "/termes?sort_by=ctime");
+        // return dictionnaire;
     }
 
     async function add_dict(terme) {
@@ -23,6 +29,21 @@
         await del("/dictionnaires/" + data.id + "/termes/" + terme.id);
         dictionnaire.termes = dictionnaire.termes.filter(t => t.id !== terme.id);
     }
+
+    var letter = ""
+    function is_new_letter(word: string)
+    {
+        return false
+        if (word == "")
+        return
+        if (word[0].toLowerCase() != letter)
+        {
+            letter = word[0].toLowerCase()
+            return true
+        }
+        return false;
+    }
+
 </script>
 
 {#if popup}
@@ -37,8 +58,22 @@
     <h1>{dictionnaire.name}</h1>
     <h3>{dictionnaire.description}</h3>
     <h5>{dictionnaire.termes.length} words</h5>
-
+    {#if dictionnaire.rights == "view"}
+        <button on:click={()=> follow_dictionnaire(dictionnaire)}  >follow</button>
+    {:else if dictionnaire.rights == "read"}
+        <button on:click={()=> unfollow_dictionnaire(dictionnaire)} >unfollow</button>
+    {:else if dictionnaire.rights == "write"}
+        <button on:click={()=> unwrite_dictionnaire(dictionnaire)} >givup write acess</button>
+    {/if}
+    <!-- <TermeFilter></TermeFilter> -->
     {#each dictionnaire.termes as terme}
+        {#if is_new_letter(terme.name)}
+            <div class="terme">
+                <div class="terme_header">
+                <h3 class="terme_name">{terme.name[0].toUpperCase()}</h3>
+            </div>
+            </div>
+        {/if}
         <div class="terme">
             <div class="terme_header">
                 <h3 class="terme_name">{terme.name}</h3>
@@ -63,9 +98,23 @@
     font-family: "Source Serif Pro", serif;
     color: #5c544b;
     padding: 30px;
-    background-color: #f4efe7;
+    background-color: transparent;
     min-height: 100vh;
-}
+
+        display: flex;
+        flex-direction: column;
+        /* padding: 1%; */
+        /* margin: 1%; */
+
+        /* background-color: rgba(250, 248, 243, 1);
+        background-image: 
+            linear-gradient(#cdcdcd 2px, transparent 2px),
+            linear-gradient(#e4e3e1 1px, transparent 1px),
+            linear-gradient(90deg, #e1c9c9 2px, transparent 2px);
+        background-size: 100px 100px, 20px  20px, 5000px,  5000px;
+        background-position: -2px -62px, -1px -1px, -4950px, -2px; */
+    }
+
 
 /* Terme cards with paper/drawn effect */
 .terme {

@@ -6,14 +6,7 @@ class ParagraphCreate(Schema):
 
 class TermeCreate(Schema):
     name = fields.Str(required=True)
-    type = fields.Enum(TermeTypes)
-    context = fields.Enum(TermeContext)
-    language = fields.Str(required=True)
     paragraphs = fields.List(fields.Nested("ParagraphCreate"),required=True)
+    metadatas = fields.Raw()
     
-class TermeResponse(Schema):
-    name = fields.Str(required=True)
-    type = fields.Enum(TermeTypes,required=True)
-    contents = fields.List(fields.Str(),required=True)
-    language = fields.Str(required=True)
     

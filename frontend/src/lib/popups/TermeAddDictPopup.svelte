@@ -2,15 +2,16 @@
 <script lang="ts">
     import Dictionnaires from "$lib/components/Dictionnaires/Dictionnaires.svelte";
 import { del, put } from "$lib/services/api";
-    import { user } from "$lib/services/global";
+    import { user, terme } from "$lib/services/global";
     import { fade } from "svelte/transition";
 
 
 
     // var visibility = $props<{}>();;
-    let { terme = $bindable(), visibility = $bindable() } = $props<{}>();
+    let { visibility = $bindable() } = $props<{}>();
 
     var changed = $state(false)
+
 
 </script>
 
@@ -21,7 +22,7 @@ import { del, put } from "$lib/services/api";
 
 
         {#key changed}
-             <Dictionnaires mode="add_to_terme" bind:terme>
+             <Dictionnaires mode="add_to_terme" bind:$terme>
                 
              </Dictionnaires>
         {/key}

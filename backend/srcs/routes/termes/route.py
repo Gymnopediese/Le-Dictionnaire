@@ -29,13 +29,20 @@ class TermesAPI(MethodView):
             name=args["name"],
             content=Terme.join_paragraphs(args["paragraphs"]),
             metadatas=args["metadatas"],
+            visibility=args['metadatas']["visibility"]["data"],
         )
         db.session.add(terme)
         db.session.commit()
+        
+        DictionnaireTerme.put_terme_metadata(args["metadatas"], terme)
+        Author.put_terme_metadata(args["metadatas"], terme)
+        
+        
 
         author = Author(
             terme=terme,
             user_id=user["id"],
+            rights="all",
         )
         db.session.add(author)
         db.session.commit()

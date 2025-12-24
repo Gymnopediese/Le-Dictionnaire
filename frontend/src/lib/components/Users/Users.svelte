@@ -27,7 +27,7 @@
     <div class="user_list">
         {#each users as f}
             {#if filter_user(f.username) && filter(f)}
-            <!-- on:click={() => goto(`/profile/${f.id}`)} -->
+            <!-- on:click={() => goto(`/profiles/${f.id}`)} -->
                 <div class="user_item" >
                     <div class="user_name">{f.username}</div>
 

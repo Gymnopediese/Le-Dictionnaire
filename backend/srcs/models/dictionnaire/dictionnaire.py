@@ -1,5 +1,4 @@
 from imports.services import *
-from models.terme.terme import *
 
 class Dictionnaire(Model):
 
@@ -8,15 +7,19 @@ class Dictionnaire(Model):
     visibility = db.Column(db.String(10), nullable=False, default="public")
     suggestions = db.Column(db.Boolean, nullable=False, default=True)
 
-    def get_allowed(self, current_user_id):
+    def user_rights(self, current_user_id):
         for ownership in self.ownerships:
             if ownership.user_id == current_user_id:
                 return ownership.rights
-            if ownership.rights == "blocked":
-                raise Exception(405, "User cannot access this dictionnary")
-        if self.visibility == "public":
-            return "view"
-        raise Exception(405, "User cannot access this dictionnary")
+        return "view"
+            
+    def get_allowed(self, current_user_id):
+        rights = self.user_rights(current_user_id)
+        if rights == "blocked":
+            raise Exception(405, "User cannot access this dictionnary")
+        if rights == "view" and self.visibility != "public":
+            raise Exception(405, "User cannot access this dictionnary")
+        return rights
 
     def put_allowed(self, current_user_id):
         for owner in self.ownerships:

@@ -47,7 +47,6 @@ export async function get_user(id)
     if (user_[id] != undefined)
         return user_[id];
     user_[id] = await get(`/users/${id}`)
-    console.log(user_[id])
     return user_[id]
 }
 

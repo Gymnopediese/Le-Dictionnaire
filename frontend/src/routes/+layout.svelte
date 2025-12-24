@@ -12,7 +12,6 @@
     async function get_me()
     {
         $user = await get("/me/");
-        console.log($user);
     } 
 
     if (!load_cookies() && !cookies.token)

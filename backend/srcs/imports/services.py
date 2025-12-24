@@ -8,4 +8,5 @@ if not srcs_services:
 	from services.model import *
 	from services.smorest import *
 	from services.swagger import *
+	from services.ts import *
 	srcs_services = True

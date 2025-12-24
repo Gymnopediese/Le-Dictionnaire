@@ -1,13 +1,16 @@
 
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { popup, user, focus_input_function } from "$lib/services/global"
+    import Error from "$lib/components/Error/Error.svelte";
+    import { popup, user, scroll_div } from "$lib/services/global"
+    import { onMount } from "svelte";
 
     var visibility = $state(true);
 
     let scrollDiv = null;
 
     function handleKeydown(event) {
+        return
         if (scrollDiv == null) return
         const input = event.target;
         if (input.selectionStart !== null) {
@@ -21,11 +24,9 @@
         }
     }
 
-    
-
-    
-
-    $focus_input_function = handleKeydown;
+    onMount(()=>{
+        $scroll_div = scrollDiv;
+    })
 
 
 
@@ -35,7 +36,7 @@
 
 <link rel="stylesheet" href="https://fonts.bunny.net/css?family=source-serif-pro:400,600,700" />
 
-
+<Error></Error>
 <main class="container">
     <!-- {#key visibility} -->
         

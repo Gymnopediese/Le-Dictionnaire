@@ -4,10 +4,12 @@
     import { onMount } from "svelte";
     import ChooseTerme from "./ChooseTerme.svelte";
     import { goto } from "$app/navigation";
-    import { allowed_metadata_types, metadatas, view_mode } from "$lib/services/global";
+    import { metadatas, view_mode } from "$lib/services/global";
     import RadioButton from "./RadioButton.svelte";
     import Dictionnaires from "./Dictionnaires/Dictionnaires.svelte";
     import Users from "./Users/Users.svelte";
+    import { allowed_metadata_types } from "$lib/shared/metadatas";
+    import { combineTransactionSteps } from "@tiptap/core";
 
     
 
@@ -31,7 +33,6 @@
     {
         $metadatas[key].used = false;
     }
-    console.log(Object.keys($metadatas).filter(x => $metadatas[x].used == true))
 
     function AddString()
     {
@@ -70,7 +71,7 @@
         newTerm = ""
     }
 
-        function AddUser(user)
+    function AddUser(user)
     {
         if ($metadatas[addTermPopup].data == undefined)
             $metadatas[addTermPopup].data = []
@@ -79,17 +80,38 @@
             "data": user,
             "type": "user",
         },...($metadatas[addTermPopup]["data"])]
-        console.log($metadatas[addTermPopup])
         addTermPopup = null
         newTerm = ""
     }
-    console.log( Object.keys(allowed_metadata_types))
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key == "Escape")
+        {
+            metadataPopup = false;
+            addTermPopup = null
+        }
+    })
     console.log($metadatas)
+
+    for (let key of Object.keys(allowed_metadata_types))
+    {
+        if ($metadatas[key])
+            continue
+        if (!allowed_metadata_types[key].required)
+            continue
+        console.log("bitch ?")
+        $metadatas[key] = allowed_metadata_types[key]
+        $metadatas[key]["data"] = allowed_metadata_types[key].default
+    }
+
+    console.log($metadatas)
+
+
 </script>
 
 <div class="metadata_block">
 
-{#each Object.keys(allowed_metadata_types).filter(x => ($metadatas[x] && $metadatas[x].used == true)) as key, i}
+{#each Object.keys(allowed_metadata_types).filter(x => ($metadatas[x])) as key, i}
     {console.log(key)}
 	<div class="meta_line">
 		<div class="meta_label">{key}</div>
@@ -98,8 +120,7 @@
                 <div class="list_box">
                     {#each $metadatas[key].data as item, j}
                         <div class="list_item">
-
-
+                            {#if item.data}   
                             {#if (item.type) == "string"}
                                 <span>{item.data}</span>
                             {:else if (item.type) == "terme"}
@@ -107,28 +128,29 @@
                                     goto(`/termes/${item.data.id}`);
                                 }}><u><i>{item.data.name}</i></u></button>
                             {:else if (item.type) == "user"}
+                                {console.log(item)}
                                 <button class="terme_link" on:click={()=>{
                                     goto(`/profiles/${item.data.id}`);
                                 }}><u><i>{item.data.username}</i></u></button>
                             {:else}
-                                
                                 <button class="terme_link" on:click={()=>{
                                     goto(`/dictionnaires/${item.data.id}`);
                                 }}><u><i>{item.data.name}</i></u></button>
                             {/if}
 
-                            {#if $view_mode == "edit"}
+                            {#if $view_mode == "edit" && !((item.type) == "user" && item.data.rights == "all")}
                                 <button class="del_small" on:click={() => {
                                     $metadatas[key].data = $metadatas[key].data.filter((_, x) => x !== j);
                                 }}>✕</button>
+                            {/if}
                             {/if}
                         </div>
                     {/each}
                     {#if $view_mode == "edit"}
                     <button class="list_add" on:click={() => { 
 
-                            allowedTermePopup = $metadatas[key].allowed
-                            termMode = $metadatas[key].allowed[0]
+                            allowedTermePopup = allowed_metadata_types[key].allowed
+                            termMode = allowed_metadata_types[key].allowed[0]
                             addTermPopup = key; 
                         }}>
                         + add
@@ -136,7 +158,7 @@
                     {/if}
                 </div>
 
-            {:else if ["type", "genre"].includes(key)}
+            {:else if allowed_metadata_types[key].options && $metadatas[key]}
                 <RadioButton options={allowed_metadata_types[key].options} bind:input={$metadatas[key].ref} bind:search={$metadatas[key].data}></RadioButton>
 
             {:else}
@@ -154,24 +176,27 @@
 {/each}
 
 
+    {#if $view_mode == "edit"}
 	<button class="add_btn" on:click={() => (metadataPopup = true)}>
 		+ add metadata
 	</button>
+    {/if}
 </div>
 
 
 {#if metadataPopup}
 	<div class="popup_bg">
 		<div class="popup">
+			
+            <div class="meta_choices">
 			{#each Object.keys($metadatas).filter(x => $metadatas[x].used == false || $metadatas[x].used == undefined ) as key}
 				<div class="choice" on:click={() => addMetadata(key)}>
-
                     {key}
-
 				</div>
 			{/each}
+            </div>
+            <button class="close sticky" on:click={() => (metadataPopup = false)}>close</button>
 
-			<button class="close" on:click={() => (metadataPopup = false)}>close</button>
 		</div>
 	</div>
 {/if}
@@ -204,7 +229,6 @@
                 filter={(dictionnaire)=> {
                     if ($metadatas[addTermPopup].data == undefined)
                         return true
-                    console.log($metadatas[addTermPopup].data.findIndex((d)=>d.data.name == dictionnaire.name))
                     return $metadatas[addTermPopup].data.findIndex((d)=>d.data.name == dictionnaire.name) == -1
                 }}
                 >
@@ -317,25 +341,25 @@
 	}
 
 	.meta_label {
-		font-size: 24px;
+		font-size:  calc(24 * var(--font-size));;
 		color: #a7a299;
-		/* padding-left: 75px; */
 	}
 
 	.remove_btn {
 		cursor: pointer;
-		font-size: 32px;
+		font-size:  calc(32 * var(--font-size));;
 		text-align: center;
 	}
 
 	.add_btn {
-		/* margin-left: 75px; */
-		font-size: 28px;
+		font-size:  calc(28 * var(--font-size));;
 		border: 1px solid #b8a898;
+        background-color: #e3d6c8;
+        /* z-index: 100; */
 		background: transparent;
-		padding: 6px 14px;
+		padding:  calc(6 * var(--font-size))  calc(14 * var(--font-size));;
         margin:0;
-        margin-right: 10px;
+        margin-right:  calc(10 * var(--font-size));;
 		cursor: pointer;
 	}
 
@@ -349,6 +373,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+        z-index: 10;
 	}
 
 	.popup {
@@ -360,7 +385,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+        z-index: 10;
+
 	}
+
+    .meta_choices {
+        overflow: scroll;
+        display: flex;
+		flex-direction: column;
+		gap: 10px;
+        z-index: 10;
+    }
 
 	.choice {
 		padding: 8px;
@@ -371,6 +406,10 @@
 	.close {
 		margin-top: 10px;
 	}
+    .sticky {
+        position: sticky;
+        top: 20px;
+    }
 
 .list_box {
     display: flex;
@@ -382,26 +421,26 @@
 .list_item {
 	display: inline-flex;
 	align-items: center;
-	gap: 8px;
+	gap: calc(8 * var(--font-size));
 	border: 1px solid #b8a898;
-	padding: 2px 8px;
-	border-radius: 4px;
+	padding: calc(2 * var(--font-size)) calc(8 * var(--font-size));
+	border-radius: calc(4 * var(--font-size));
 	width: fit-content;
-	font-size: 22px;
+	font-size:  calc(22 * var(--font-size));
 	color: #6e6a63;
 }
 
 .del_small {
 	all: unset;
 	cursor: pointer;
-	font-size: 20px;
+	font-size: calc(20 * var(--font-size));
 	color: #8b6f6f;
 }
 
 .list_add {
 	all: unset;
 	cursor: pointer;
-	font-size: 24px;
+	font-size: calc(24 * var(--font-size));
 	color: #8b6f6f;
 	border-bottom: 1px dashed #b8a898;
 	width: fit-content;

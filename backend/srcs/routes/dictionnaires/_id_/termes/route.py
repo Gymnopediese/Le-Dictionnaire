@@ -33,7 +33,7 @@ class DictionnaireApi(MethodView):
         if sort_by in ["ctime", "utime"]:
             q = q.order_by(getattr(Terme, sort_by).desc())#getattr(DictionnaireTerme, sort_by))
         
-
+    
         if amount:
             q = q.limit(amount)
         print(amount, args)

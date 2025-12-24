@@ -24,11 +24,9 @@
         search = opt;
         lastValid = opt;
         open = false;
-        console.log("t serieux")
     }
 
     function onInputKey(e: KeyboardEvent) {
-
         var t = options.filter(o =>
                     o.toLowerCase().includes(search.toLowerCase())
                 )
@@ -48,15 +46,13 @@
         if (e.key === "Backspace" && t.length < 2) {
             // retour à l’ancienne recherche
             // if (!options.includes(search)) search = lastValid;
-            console.log("back space !")
             while (filtered.length < 2)
             {
                 search = search.substring(0, search.length - 1)
                 filtered= options.filter(o =>
                     o.toLowerCase().includes(search.toLowerCase())
                 )
-                console.log(search)
-                console.log(filtered)
+
             }
             open = true
             e.preventDefault();
@@ -74,7 +70,12 @@
         open = true;
     }
     function focusOut(){
-        open = false
+        setTimeout(() => {
+            open = false
+        }, 150);
+        //  requestAnimationFrame(() => {
+        //     open = false
+        //  })
     }
 </script>
 

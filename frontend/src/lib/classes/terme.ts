@@ -1,6 +1,8 @@
 import { goto } from "$app/navigation";
+import { ERROR } from "$lib/components/Error/Error";
 import { del, post, put } from "$lib/services/api";
-import { focus_input_function, get_writable, metadatas, toggle_view_mode, view_mode } from "$lib/services/global";
+import { get_writable, metadatas, scroll_div, toggle_view_mode, view_mode } from "$lib/services/global";
+import { allowed_metadata_types } from "$lib/shared/metadatas";
 import { json } from "@sveltejs/kit";
 import { writable, type Writable } from "svelte/store";
 
@@ -74,7 +76,7 @@ export default class Terme
     remove          : boolean = false
     error           : Writable<string> = writable("");
     draft_id        : string = "";
-    
+    temp_scroll     : number = 0;
     constructor(terme)
     {
         this.init(terme);
@@ -110,6 +112,7 @@ export default class Terme
         {
             if (input.value === "")
             {
+                ERROR(`Cannot post a terme with empty fields`)
                 throw (`Cannot save empty fieds, ${input}`)
             }
         }
@@ -123,13 +126,18 @@ export default class Terme
             }),
             metadatas: Object.fromEntries(
                         Object.entries(get_writable(metadatas))
-                        .filter(([_, metadata]: any) => metadata.used === true)
                         .map(([key, metadata]: any) => {
+                            if (allowed_metadata_types[key].options && !allowed_metadata_types[key].options.includes(metadata.data))
+                            {
+                                this.error = "invalid " + metadata.name;
+                                ERROR(this.error)
+                                throw (this.error)
+                            }
                             if (metadata.type === "string") return [key, {
                                     type: metadata.type,
                                     data: metadata.data,
                             }];
-                            if (metadata.type === "terme")
+                            if (["terme", "user", "dictionnaire"].includes(metadata.type))
                             {
                                 return [key, {
                                     type: metadata.type,
@@ -144,7 +152,7 @@ export default class Terme
                                         type: metadata.type,
                                         data: metadata.data,
                                     });
-                                    if (meta.type === "terme")
+                                    if (["terme", "user", "dictionnaire"].includes(meta.type))
                                         list.push({
                                             type: meta.type,
                                             data: meta.data.id,
@@ -165,8 +173,11 @@ export default class Terme
     }
     async post()
     {
+        if (this.id != -1)
+            return await this.put()
         try {
             var payload = this.payload()
+
             var terme = await post("/termes/", payload["terme"]);
             this.id = terme.id;
             goto(`/termes/${this.id}`)
@@ -238,7 +249,6 @@ export default class Terme
 
         for (let m of Object.values(get_writable(metadatas)))
         {
-            console.log(m)
             if (m.ref != undefined || m.ref != null)
                 this.inputs.push(m.ref)
         }
@@ -265,9 +275,7 @@ export default class Terme
         if (index + shift >= this.inputs.length)
             index -= this.inputs.length
         this.set_inputs()
-        console.log(this.inputs)
         this.inputs[index + shift].focus()
-        get_writable(focus_input_function)()
     }
 
     focus_at(x, y)
@@ -283,6 +291,10 @@ export default class Terme
         {
             paragraph.content.focus();
         }
+        // scroll_div.update((div)=> {
+        //     div.scrollTop = this.temp_scroll
+        //     return div;
+        // })
         return true;
     }
 
@@ -303,6 +315,7 @@ export default class Terme
     {
         if (num < 0 && this.paragraphs.length == 1)
             return
+        // this.temp_scroll = get_writable(scroll_div).scrollTop
 
         if (num > 0)
         {

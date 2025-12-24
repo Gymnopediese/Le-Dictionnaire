@@ -12,13 +12,16 @@ class TermeAPI(MethodView):
     @termes.doc(description="Update a temre by ID or Secret")
     @termes.arguments(TermeCreate)
     @termes.response(200)
-    @decorator(object=Terme, user=True)
-    def put(self, args, object, user):
+    @decorator(object=Terme, user=True, autorename=True)
+    def put(self, args, terme, user):
         args["content"] = Terme.join_paragraphs(args["paragraphs"])
-        object.put_allowed(user["id"])
-        object.metadatas_allowed(args["metadatas"], user["id"])
-        object.put(args)
-        Version.new(object)
+        terme.put_allowed(user["id"])
+        terme.metadatas_allowed(args["metadatas"], user["id"])
+        DictionnaireTerme.put_terme_metadata(args["metadatas"], terme)
+        Author.put_terme_metadata(args["metadatas"], terme)
+        terme.visibility = args['metadatas']["visibility"]["data"]
+        terme.put(args)
+        Version.new(terme)
         return jsonify({})
     
     @termes.doc(description="Delete a user by ID")

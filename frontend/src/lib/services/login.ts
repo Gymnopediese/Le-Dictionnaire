@@ -6,7 +6,6 @@ import { user } from "./global";
 export async function signin(username: String, password: String)
 {
     var token = await post("/auth/signin", {username, password}, false);
-    console.log("token", token)
     set_cookie("token", token.token);
     user.set(await get("/me/"))
     goto("/")

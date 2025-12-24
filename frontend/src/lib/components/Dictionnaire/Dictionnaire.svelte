@@ -13,7 +13,7 @@
     async function try_get_terme() {
         if (dictionnaire != null) return dictionnaire;
         dictionnaire = await  get_dictionnaire(data.id);
-        console.log(dictionnaire)
+
         return dictionnaire
         // dictionnaire = await get("/dictionnaires/" + data.id);
         // dictionnaire.termes = await get("/dictionnaires/" + data.id + "/termes?sort_by=ctime");

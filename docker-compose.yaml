@@ -21,6 +21,7 @@ services:
       - backend
     volumes:
       - ./backend:/app
+      - ./frontend/src/lib/shared:/app/shared
 
   postgres:
     image: postgres:16beta1-alpine3.18
@@ -42,6 +43,16 @@ services:
     restart: always
     ports:
       - 7502:8080
+    networks:
+      - backend
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis_dictionnaire
+    hostname: redis
+    restart: always
+    ports:
+      - 7504:6379
     networks:
       - backend
   

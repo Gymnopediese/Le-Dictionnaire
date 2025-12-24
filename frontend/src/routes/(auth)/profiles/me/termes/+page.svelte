@@ -9,7 +9,6 @@
     async function try_get_terme()
     {
         dictionnaire = await get("/me/termes");
-        console.log(dictionnaire.termes[0])
         return dictionnaire;
     }
 
@@ -26,7 +25,6 @@
             termes: dictionnaire.termes,
         }
     }>
-
     </Dictionnaire>
 {/await}
 

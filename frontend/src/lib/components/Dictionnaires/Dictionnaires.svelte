@@ -35,8 +35,6 @@
         terme.terme.dictionnaires.push({id});
         changed = !changed;
     }
-
-    console.log(dictionnaires)
 </script>
 
 

@@ -10,7 +10,6 @@ def signin(params):
     """
     credential = params.get("username")
     password = params.get("password")
-    print(credential, password)
     user = User.query.filter_by(username=credential).first()
     if user and user.check_password(password):
         return jsonify({'token': user.generate_token()})

@@ -1,4 +1,5 @@
 import { goto } from "$app/navigation";
+import { ERROR } from "$lib/components/Error/Error";
 import { cookies, remove_cookie,  } from '$lib/services/cookies';
 
 export async function ping()
@@ -25,8 +26,14 @@ async function protection(result: Response, token_needed: boolean = true) {
         goto("/")
         throw new Error("Unauthorized")
     }
+    if (result.status == 405)
+    {
+        ERROR("permission denied")
+        goto("/")
+    }
     if (result.status >= 400)
     {
+        console.log(result)
         throw await res
     }
     return await res

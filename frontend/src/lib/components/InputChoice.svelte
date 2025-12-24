@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { view_mode, focus_input_function } from "$lib/services/global";
+    import { scroll_div, view_mode } from "$lib/services/global";
+    import { onMount } from "svelte";
 
 
     export var label        : string = "";
@@ -8,15 +9,28 @@
     export let input        : HTMLElement | null = null;
     export let class_name   : string = "";
     export let value        : string = "";
+    export let on_focus              = null;
     var id                  : string = String(Math.random() * 100000)
 
+
+    function on_mount_input(event){
+        var child = event.target
+        var new_pos = child.offsetTop - $scroll_div.clientHeight * 1 / 4
+        requestAnimationFrame(() => {
+            $scroll_div.scrollTop = new_pos
+        })
+    }
+
+    onMount(() => {
+        on_mount_input({target: input})
+    })
 </script>
 <div >
 
 
 {#if $view_mode == "edit"}
 <!-- style="float: {align}; width:{width};font-size:{font_size}; height:{height};" -->
-<input on:focus={$focus_input_function} on:keydown={$focus_input_function} bind:value class="{class_name}" bind:this={input}  placeholder="{placeholder}" list="{id}" type="text"> <br>
+<input on:focus={on_focus} on:click={on_focus} on:keydown={focus_input_function} bind:value class="{class_name}" bind:this={input}  placeholder="{placeholder}" list="{id}" type="text"> <br>
 <datalist id="{id}">
     {#each options as option}
         <option value="{option}"> </option>

@@ -1,5 +1,5 @@
-from imports.extern import *
-
+from imports.services import *
+from services.ts import load_ts_var
 class MetadataTypes(enum.Enum):
     # le type du texte
     type="type"
@@ -30,56 +30,4 @@ class MetadataDataTypes(enum.Enum):
     terme="terme"
     user="user"
     
-
-allowed_metadata_types = {
-  "type": {
-    "name": "type",
-    "type": "string",
-    "allowed": ["string"]
-  },
-  "domaine": {
-    "name": "domaine",
-    "type": "string",
-    "allowed": ["string"]
-  },
-  "context": {
-    "name": "context",
-    "type": "string",
-    "allowed": ["string"]
-  },
-  "genre": {
-    "name": "genre",
-    "type": "string",
-    "allowed": ["string"]
-  },
-  "date": {
-    "name": "date",
-    "type": "date",
-    "allowed": ["date"]
-  },
-  "language": {
-    "name": "language",
-    "type": "string",
-    "allowed": ["string"]
-  },
-  "aka": {
-    "name": "aka",
-    "type": "list",
-    "allowed": ["string", "terme"]
-  },
-  "synonyme": {
-    "name": "synonyme",
-    "type": "list",
-    "allowed": ["string", "terme"]
-  },
-  "friend": {
-    "name": "friend",
-    "type": "list",
-    "allowed": ["string", "terme"]
-  },
-  "anthonyme": {
-    "name": "anthonyme",
-    "type": "list",
-    "allowed": ["string", "terme"]
-  }
-}
+allowed_metadata_types = load_ts_var("./shared/metadatas.ts")

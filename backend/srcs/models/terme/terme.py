@@ -3,6 +3,7 @@ from models.dictionnaire.dictionnaire_termes import *
 from models.dictionnaire.dictionnaire import *
 from imports.enums import *
 from models.user.user import User
+from models.dictionnaire.dictionnaire import Dictionnaire
 from imports.responses import *
 from copy import deepcopy
 
@@ -27,17 +28,40 @@ class Terme(Model):
     # links_outs
     # dictionnaires
     # suggestions
+
+    def is_author(self, current_user_id):
+        
+        for author in self.authors:
+            if author.rights in ["all", "write"] and author.user_id == current_user_id:
+                return True
+        return False
+
     def put_allowed(self, current_user_id):
-        return
-        # if "dictionnaires" in args:
-        #     for id in args["dictionnaires"]:
-        #         dictionnaire = Dictionnaire.query.get(id)
-        #         if not dictionnaire:
-        #             raise Exception(404, "invalide ressource")
-        #         dictionnaire.put_allowed(current_user_id)
-        return super().put_allowed(current_user_id)
+        if self.is_author(current_user_id):
+            return
+        return Exception(405, "not allowed to modify ressource")
+    
+    # Allow to view the word if : it is in a public dictionnary, is in a dictionnary owned by the user or was made by the user.
+    def get_allowed(self, current_user_id):
+        if self.visibility == "public":
+            return
+        if self.is_author(current_user_id):
+            return
+        if self.visibility == "private":
+            raise Exception(405, "not allowed to access ressource")
+        for dictionnaire in self.dictionnaires:
+            if dictionnaire.dictionnaire.visibility == "public":
+                return
+            for owner in self.ownerships:
+                if owner.user_id == current_user_id:
+                    return
+        raise Exception(405, "not allowed to access ressource")
 
-
+    def delete_allowed(self, current_user_id):
+        for author in self.authors:
+            if author.rights in ["all", "write"] and author.user_id == current_user_id:
+                return
+        raise Exception(405, "not allowed to delete ressource links")
 
     @staticmethod
     def join_paragraphs(paragraphs):
@@ -49,6 +73,7 @@ class Terme(Model):
             content += "$@$"
             
         return content
+    
 
     def split_paragraphs(self):
 
@@ -86,40 +111,43 @@ class Terme(Model):
         # traceback.print_stack()
         if "metadatas" in schema._declared_fields and user_id:
             res["metadatas"] = self.serialize_metadatas(user_id)
-            if "metadata_types" in schema._declared_fields:
-                metadatas = res["metadatas"]
-                for key, val in allowed_metadata_types.items():
-                    if key in metadatas:
-                        metadatas[key]["name"] = val["name"]
-                        metadatas[key]["allowed"] = val["allowed"]
-                        metadatas[key]["type"] = val["type"]
-                        metadatas[key]["used"] = True
-                        continue
-                    metadatas[key] = deepcopy(val)
-                    metadatas[key]["used"] = False
-                res["metadatas"] = metadatas
-        
+            # if "metadata_types" in schema._declared_fields:
+            metadatas = res["metadatas"]
+
+            metadatas["dictionnaires"] = {}
+            metadatas["dictionnaires"]["name"] = "dictionnaires"
+            metadatas["dictionnaires"]["type"] = "list"
+            metadatas["dictionnaires"]["data"] = []
+            for dict in self.dictionnaires:
+                metadatas["dictionnaires"]["data"].append({
+                    "type": "dictionnaire",
+                    "data": {
+                        "name": dict.dictionnaire.name,
+                        "id": dict.dictionnaire.id,
+                    }
+                })
+                
+                
+            metadatas["authors"] = {}
+            metadatas["authors"]["name"] = "authors"
+            metadatas["authors"]["type"] = "list"
+            metadatas["authors"]["data"] = []
+            for author in self.authors:
+                metadatas["authors"]["data"].append({
+                    "type": "user",
+                    "data": {
+                        "username": author.user.username,
+                        "id": author.user.id,
+                        "rights": author.rights,
+                    }
+                })
+                # metadatas[key] = deepcopy(val)
+                # metadatas[key]["used"] = False
+            res["metadatas"] = metadatas
+        print(res)
         return res
 
-    
-    # Allow to view the word if : it is in a public dictionnary, is in a dictionnary owned by the user or was made by the user.
-    def get_allowed(self, current_user_id):
-        for dictionnaire in self.dictionnaires:
-            if dictionnaire.dictionnaire.visibility == "public":
-                return
-            for owner in self.ownerships:
-                if owner.user_id == current_user_id:
-                    return
-        for author in self.authors:
-            if author.user_id == current_user_id:
-                return
-        raise Exception(405, "not allowed to access ressource")
 
-    def delete_allowed(self, current_user_id):
-        for author in self.authors:
-            if author.user_id == current_user_id:
-                return
-        raise Exception(405, "not allowed to delete ressource links")
     
     def delete_metadata(self, metatype, value):
 
@@ -196,11 +224,28 @@ class Terme(Model):
             if not link:
                 raise Exception(404, "Not a valid terme")
             link.get_allowed(user_id)
+        
+        if data_type == "dictionnaire":
+            data=int(data)
+            link = Dictionnaire.query.get(data)
+            if not link:
+                raise Exception(404, "Not a valid terme")
+            link.get_allowed(user_id)
 
     @staticmethod
     def metadatas_allowed(metadatas, user_id):
         
+        if not "dictionnaires" in metadatas:
+            raise Exception(422, f"Missing Dictionnaires to put terme")
+        
+        if not "authors" in metadatas:
+            raise Exception(422, f"Missing Authors to put terme")
+        
+        if not "visibility" in metadatas:
+            raise Exception(422, f"Missing Visibility to put terme")
+        
         for metatype, value in metadatas.items():
+            
             
             if len(value) != 2:
                 raise Exception(422, f"Invalid metadata keys for {metatype}")

@@ -21,12 +21,10 @@
     
         dictionnaires = await get_dictionnaires("me")
 
-        console.log(dictionnaires)
         dictionnaires = [({
             name: "all",
             id: "me",
         }), ...dictionnaires]
-        console.log(dictionnaires)
         selected = dictionnaires[0]
         var termes = $user.termes;
         get_dict
@@ -39,7 +37,6 @@
 
     async function get_dict() {
         var diction = await get_dictionnaire(selected.id);  
-        console.log(diction)
         return diction;
     }
 
